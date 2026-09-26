@@ -558,1121 +558,6 @@ async function loadLeads() {
 }
 
 // ==========================================================================
-// QUOTATION GENERATOR & LUXURY PROPOSAL BUILDER LOGIC
-// ==========================================================================
-let activeQuotation = {
-  selectedTemplate: 'template1', // 'template1' or 'template2'
-  clientName: 'Bhavya Allu',
-  coupleNames: 'Groom: Anish • Bride: Bhavya Allu',
-  phone: '+91 97056 32982',
-  email: 'bhavya.allu@wedding.com',
-  website: 'timemachineworks.com',
-  mediaTheme: 'set1',
-  videoUrl: './videos/hero-wedding.mp4',
-  about1Url: '',
-  about2Url: '',
-  events: [
-    {
-      id: 'evt-1',
-      name: 'Engagement Ceremony',
-      date: '11 Feb 2027',
-      location: 'Guntur, Andhra Pradesh',
-      candidPhoto: 1,
-      candidVideo: 1,
-      tradPhoto: 1,
-      tradVideo: 1,
-      dronePilot: 0,
-      badges: []
-    },
-    {
-      id: 'evt-2',
-      name: 'Grand Wedding Celebrations',
-      date: '25 Feb 2027',
-      location: 'Hyderabad, Telangana',
-      candidPhoto: 2,
-      candidVideo: 2,
-      tradPhoto: 2,
-      tradVideo: 2,
-      dronePilot: 1,
-      badges: ['Pellikoduku', 'Bride Ceremony', 'Haldi', 'Sangeeth', 'Mehendi', 'Vratham', 'Wedding']
-    }
-  ],
-  services: {
-    pictures: true,
-    films: true,
-    albums: true,
-    videos: true
-  },
-  addOns: {
-    ledWall: false,
-    liveStream: false,
-    droneCoverage: false,
-    extraAlbums: 0
-  },
-  totalPrice: '2,50,000',
-  advancePct: '50% Booking Retainer',
-  finalPct: '50% Balance Prior to Raw Footage Handover',
-  hdNote: 'Requirement of two 4TB External Hard Drives for client data safety.'
-};
-
-function initQuotationGenerator() {
-  try {
-    const saved = localStorage.getItem('studio_active_quotation');
-    if (saved) {
-      activeQuotation = JSON.parse(saved);
-    }
-  } catch (e) {}
-
-  populateQuotationForm();
-  renderQuoteEventsForm();
-  renderProposalPreview();
-  bindQuotationEvents();
-}
-
-function populateQuotationForm() {
-  const clientInput = document.getElementById('quote-client-name');
-  const coupleInput = document.getElementById('quote-couple-names');
-  const phoneInput = document.getElementById('quote-client-phone');
-  const emailInput = document.getElementById('quote-client-email');
-  const priceInput = document.getElementById('quote-total-price');
-  const advanceInput = document.getElementById('quote-advance-pct');
-  const finalInput = document.getElementById('quote-final-pct');
-  const hdNoteInput = document.getElementById('quote-hd-note');
-  const themeSelect = document.getElementById('quote-media-theme');
-  const videoInput = document.getElementById('quote-video-url');
-  const about1Input = document.getElementById('quote-about1-url');
-  const about2Input = document.getElementById('quote-about2-url');
-
-  if (clientInput) clientInput.value = activeQuotation.clientName || '';
-  if (coupleInput) coupleInput.value = activeQuotation.coupleNames || '';
-  if (phoneInput) phoneInput.value = activeQuotation.phone || '';
-  if (emailInput) emailInput.value = activeQuotation.email || '';
-  if (priceInput) priceInput.value = activeQuotation.totalPrice || '';
-  if (advanceInput) advanceInput.value = activeQuotation.advancePct || '';
-  if (finalInput) finalInput.value = activeQuotation.finalPct || '';
-  if (hdNoteInput) hdNoteInput.value = activeQuotation.hdNote || '';
-  if (themeSelect) themeSelect.value = activeQuotation.mediaTheme || 'set1';
-  if (videoInput) videoInput.value = activeQuotation.videoUrl || '';
-  if (about1Input) about1Input.value = activeQuotation.about1Url || '';
-  if (about2Input) about2Input.value = activeQuotation.about2Url || '';
-
-  const tplSelect = document.getElementById('quote-template-select');
-  if (tplSelect) tplSelect.value = activeQuotation.selectedTemplate || 'template1';
-
-  const svcPic = document.getElementById('svc-pictures-check');
-  const svcFilm = document.getElementById('svc-films-check');
-  const svcAlbum = document.getElementById('svc-albums-check');
-  const svcVid = document.getElementById('svc-videos-check');
-
-  if (svcPic) svcPic.checked = activeQuotation.services.pictures;
-  if (svcFilm) svcFilm.checked = activeQuotation.services.films;
-  if (svcAlbum) svcAlbum.checked = activeQuotation.services.albums;
-  if (svcVid) svcVid.checked = activeQuotation.services.videos;
-
-  const addonLed = document.getElementById('addon-led-check');
-  const addonStream = document.getElementById('addon-livestream-check');
-  const addonDrone = document.getElementById('addon-drone-check');
-  const albumCountEl = document.getElementById('addon-album-count');
-
-  if (addonLed) addonLed.checked = !!activeQuotation.addOns.ledWall;
-  if (addonStream) addonStream.checked = !!activeQuotation.addOns.liveStream;
-  if (addonDrone) addonDrone.checked = !!activeQuotation.addOns.droneCoverage;
-  if (albumCountEl) albumCountEl.textContent = activeQuotation.addOns.extraAlbums || 0;
-}
-
-function renderQuoteEventsForm() {
-  const container = document.getElementById('quote-events-list');
-  if (!container) return;
-
-  if (activeQuotation.events.length === 0) {
-    container.innerHTML = `
-      <div style="text-align: center; padding: 2rem; color: var(--color-body-muted); background: #FAF8F5; border-radius: 8px;">
-        No events added yet. Click "+ Add Event" to configure celebration coverage.
-      </div>
-    `;
-    return;
-  }
-
-  container.innerHTML = activeQuotation.events.map((evt, idx) => `
-    <div class="event-item-card" data-evt-id="${evt.id}">
-      <div class="event-item-header">
-        <span style="font-family: var(--font-ui); font-size: 0.78rem; font-weight: 700; color: #C5A059; text-transform: uppercase; letter-spacing: 0.1em;">
-          EVENT #${idx + 1}
-        </span>
-        <button type="button" class="btn-remove-evt" data-evt-id="${evt.id}" style="background: none; border: none; color: #D9534F; font-size: 0.82rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.3rem;">
-          ✕ Remove Event
-        </button>
-      </div>
-
-      <div class="admin-form-grid">
-        <div class="admin-form-group col-full">
-          <label class="admin-label">Event Name / Title</label>
-          <input type="text" class="admin-input evt-input-name" data-evt-id="${evt.id}" value="${evt.name || ''}" placeholder="e.g. Engagement, Sangeeth, Wedding, Haldi">
-        </div>
-
-        <div class="admin-form-group">
-          <label class="admin-label">Event Date</label>
-          <input type="text" class="admin-input evt-input-date" data-evt-id="${evt.id}" value="${evt.date || ''}" placeholder="e.g. 12 Nov 2026">
-        </div>
-
-        <div class="admin-form-group">
-          <label class="admin-label">Venue Location</label>
-          <input type="text" class="admin-input evt-input-loc" data-evt-id="${evt.id}" value="${evt.location || ''}" placeholder="e.g. Hyderabad, Telangana">
-        </div>
-
-        <div class="admin-form-group col-full" style="background: #FFFFFF; padding: 1rem; border-radius: 6px; border: 1px solid var(--color-border-light); margin-top: 0.5rem;">
-          <label class="admin-label" style="margin-bottom: 0.75rem; display: block;">Crew Breakdown & Staffing</label>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
-            
-            <div>
-              <span style="font-size: 0.8rem; color: var(--color-body); font-weight: 500;">Candid Photographers</span>
-              <div class="crew-counter-group" style="margin-top: 0.35rem;">
-                <button type="button" class="crew-btn btn-crew-minus" data-evt-id="${evt.id}" data-field="candidPhoto">-</button>
-                <span style="font-weight: 700; font-size: 0.9rem; width: 24px; text-align: center;">${evt.candidPhoto || 0}</span>
-                <button type="button" class="crew-btn btn-crew-plus" data-evt-id="${evt.id}" data-field="candidPhoto">+</button>
-              </div>
-            </div>
-
-            <div>
-              <span style="font-size: 0.8rem; color: var(--color-body); font-weight: 500;">Candid Videographers</span>
-              <div class="crew-counter-group" style="margin-top: 0.35rem;">
-                <button type="button" class="crew-btn btn-crew-minus" data-evt-id="${evt.id}" data-field="candidVideo">-</button>
-                <span style="font-weight: 700; font-size: 0.9rem; width: 24px; text-align: center;">${evt.candidVideo || 0}</span>
-                <button type="button" class="crew-btn btn-crew-plus" data-evt-id="${evt.id}" data-field="candidVideo">+</button>
-              </div>
-            </div>
-
-            <div>
-              <span style="font-size: 0.8rem; color: var(--color-body); font-weight: 500;">Traditional Photographers</span>
-              <div class="crew-counter-group" style="margin-top: 0.35rem;">
-                <button type="button" class="crew-btn btn-crew-minus" data-evt-id="${evt.id}" data-field="tradPhoto">-</button>
-                <span style="font-weight: 700; font-size: 0.9rem; width: 24px; text-align: center;">${evt.tradPhoto || 0}</span>
-                <button type="button" class="crew-btn btn-crew-plus" data-evt-id="${evt.id}" data-field="tradPhoto">+</button>
-              </div>
-            </div>
-
-            <div>
-              <span style="font-size: 0.8rem; color: var(--color-body); font-weight: 500;">Traditional Videographers</span>
-              <div class="crew-counter-group" style="margin-top: 0.35rem;">
-                <button type="button" class="crew-btn btn-crew-minus" data-evt-id="${evt.id}" data-field="tradVideo">-</button>
-                <span style="font-weight: 700; font-size: 0.9rem; width: 24px; text-align: center;">${evt.tradVideo || 0}</span>
-                <button type="button" class="crew-btn btn-crew-plus" data-evt-id="${evt.id}" data-field="tradVideo">+</button>
-              </div>
-            </div>
-
-            <div>
-              <span style="font-size: 0.8rem; color: var(--color-body); font-weight: 500;">Drone Cinematographer</span>
-              <div class="crew-counter-group" style="margin-top: 0.35rem;">
-                <button type="button" class="crew-btn btn-crew-minus" data-evt-id="${evt.id}" data-field="dronePilot">-</button>
-                <span style="font-weight: 700; font-size: 0.9rem; width: 24px; text-align: center;">${evt.dronePilot || 0}</span>
-                <button type="button" class="crew-btn btn-crew-plus" data-evt-id="${evt.id}" data-field="dronePilot">+</button>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-    </div>
-  `).join('');
-
-  container.querySelectorAll('.btn-remove-evt').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.getAttribute('data-evt-id');
-      activeQuotation.events = activeQuotation.events.filter(e => e.id !== id);
-      renderQuoteEventsForm();
-      renderProposalPreview();
-    });
-  });
-
-  container.querySelectorAll('.evt-input-name').forEach(inp => {
-    inp.addEventListener('input', (e) => {
-      const id = e.target.getAttribute('data-evt-id');
-      const item = activeQuotation.events.find(x => x.id === id);
-      if (item) { item.name = e.target.value; renderProposalPreview(); }
-    });
-  });
-
-  container.querySelectorAll('.evt-input-date').forEach(inp => {
-    inp.addEventListener('input', (e) => {
-      const id = e.target.getAttribute('data-evt-id');
-      const item = activeQuotation.events.find(x => x.id === id);
-      if (item) { item.date = e.target.value; renderProposalPreview(); }
-    });
-  });
-
-  container.querySelectorAll('.evt-input-loc').forEach(inp => {
-    inp.addEventListener('input', (e) => {
-      const id = e.target.getAttribute('data-evt-id');
-      const item = activeQuotation.events.find(x => x.id === id);
-      if (item) { item.location = e.target.value; renderProposalPreview(); }
-    });
-  });
-
-  container.querySelectorAll('.btn-crew-minus').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.getAttribute('data-evt-id');
-      const field = btn.getAttribute('data-field');
-      const item = activeQuotation.events.find(x => x.id === id);
-      if (item && item[field] > 0) {
-        item[field]--;
-        renderQuoteEventsForm();
-        renderProposalPreview();
-      }
-    });
-  });
-
-  container.querySelectorAll('.btn-crew-plus').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = btn.getAttribute('data-evt-id');
-      const field = btn.getAttribute('data-field');
-      const item = activeQuotation.events.find(x => x.id === id);
-      if (item) {
-        item[field] = (item[field] || 0) + 1;
-        renderQuoteEventsForm();
-        renderProposalPreview();
-      }
-    });
-  });
-}
-
-function bindQuotationEvents() {
-  const bindInput = (id, key, subKey) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const handler = (e) => {
-      const val = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-      if (subKey) {
-        activeQuotation[key][subKey] = val;
-      } else {
-        activeQuotation[key] = val;
-      }
-      renderProposalPreview();
-    };
-    el.addEventListener('input', handler);
-    if (el.type === 'checkbox') el.addEventListener('change', handler);
-  };
-
-  bindInput('quote-client-name', 'clientName');
-  bindInput('quote-couple-names', 'coupleNames');
-  bindInput('quote-client-phone', 'phone');
-  bindInput('quote-client-email', 'email');
-  bindInput('quote-total-price', 'totalPrice');
-  bindInput('quote-advance-pct', 'advancePct');
-  bindInput('quote-final-pct', 'finalPct');
-  bindInput('quote-hd-note', 'hdNote');
-  bindInput('quote-media-theme', 'mediaTheme');
-  bindInput('quote-video-url', 'videoUrl');
-  bindInput('quote-about1-url', 'about1Url');
-  bindInput('quote-about2-url', 'about2Url');
-
-  const tplSelect = document.getElementById('quote-template-select');
-  if (tplSelect) {
-    tplSelect.addEventListener('change', (e) => {
-      activeQuotation.selectedTemplate = e.target.value;
-      renderProposalPreview();
-    });
-  }
-
-  bindInput('svc-pictures-check', 'services', 'pictures');
-  bindInput('svc-films-check', 'services', 'films');
-  bindInput('svc-albums-check', 'services', 'albums');
-  bindInput('svc-videos-check', 'services', 'videos');
-
-  bindInput('addon-led-check', 'addOns', 'ledWall');
-  bindInput('addon-livestream-check', 'addOns', 'liveStream');
-  bindInput('addon-drone-check', 'addOns', 'droneCoverage');
-
-  const albumMinus = document.getElementById('btn-addon-album-minus');
-  const albumPlus = document.getElementById('btn-addon-album-plus');
-  const albumCount = document.getElementById('addon-album-count');
-
-  if (albumMinus) {
-    albumMinus.addEventListener('click', () => {
-      if (activeQuotation.addOns.extraAlbums > 0) {
-        activeQuotation.addOns.extraAlbums--;
-        if (albumCount) albumCount.textContent = activeQuotation.addOns.extraAlbums;
-        renderProposalPreview();
-      }
-    });
-  }
-
-  if (albumPlus) {
-    albumPlus.addEventListener('click', () => {
-      activeQuotation.addOns.extraAlbums++;
-      if (albumCount) albumCount.textContent = activeQuotation.addOns.extraAlbums;
-      renderProposalPreview();
-    });
-  }
-
-  const addEvtBtn = document.getElementById('btn-add-quote-event');
-  if (addEvtBtn) {
-    addEvtBtn.addEventListener('click', () => {
-      activeQuotation.events.push({
-        id: 'evt-' + Date.now(),
-        name: 'Celebration Event',
-        date: 'TBD Date',
-        location: 'TBD Location',
-        candidPhoto: 1,
-        candidVideo: 1,
-        tradPhoto: 1,
-        tradVideo: 1,
-        dronePilot: 0
-      });
-      renderQuoteEventsForm();
-      renderProposalPreview();
-    });
-  }
-
-  const printBtn = document.getElementById('btn-print-proposal');
-  if (printBtn) {
-    printBtn.addEventListener('click', async () => {
-      const element = document.getElementById('proposal-template-preview');
-      if (!element) return;
-
-      showToast('Generating high-resolution luxury PDF...');
-
-      if (typeof window.html2pdf === 'function') {
-        const originalText = printBtn.innerHTML;
-        printBtn.disabled = true;
-        printBtn.innerHTML = `⏳ Preparing PDF...`;
-
-        // Temporarily swap videos with poster images for clean canvas rendering
-        const videos = element.querySelectorAll('video');
-        const videoParents = [];
-        videos.forEach(v => {
-          const img = document.createElement('img');
-          img.src = v.poster || './videos/preview_check.jpg';
-          img.style.cssText = v.style.cssText;
-          img.className = 'pdf-temp-video-poster';
-          v.parentNode.insertBefore(img, v);
-          v.style.display = 'none';
-          videoParents.push({ video: v, posterImg: img });
-        });
-
-        const clientName = (activeQuotation.clientName || 'Bhavya_Allu').replace(/[^a-zA-Z0-9]/g, '_');
-        const opt = {
-          margin:       [0.3, 0.3, 0.3, 0.3],
-          filename:     `Timemachine_Quotation_${clientName}.pdf`,
-          image:        { type: 'jpeg', quality: 0.98 },
-          html2canvas:  { scale: 2, useCORS: true, logging: false },
-          jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' },
-          pagebreak:    { mode: ['css', 'legacy'] }
-        };
-
-        try {
-          await window.html2pdf().set(opt).from(element).save();
-          showToast('PDF proposal downloaded successfully!');
-        } catch (err) {
-          console.warn('html2pdf error, falling back to window.print():', err);
-          window.print();
-        } finally {
-          // Restore video elements
-          videoParents.forEach(item => {
-            if (item.posterImg && item.posterImg.parentNode) {
-              item.posterImg.parentNode.removeChild(item.posterImg);
-            }
-            item.video.style.display = 'block';
-          });
-          printBtn.disabled = false;
-          printBtn.innerHTML = originalText;
-        }
-      } else {
-        window.print();
-      }
-    });
-  }
-
-  const waBtn = document.getElementById('btn-send-whatsapp');
-  if (waBtn) {
-    waBtn.addEventListener('click', () => {
-      const cleanPhone = (activeQuotation.phone || '').replace(/[^0-9]/g, '');
-      const evtNames = activeQuotation.events.map(e => e.name).join(', ');
-      const msg = `Dear ${activeQuotation.clientName || 'Client'},\n\nGreetings from Timemachine & Co! ✨\n\nWe have prepared a fine-art luxury wedding quotation proposal tailored for your celebrations.\n\nSummary:\n• Couple: ${activeQuotation.coupleNames || '-'}\n• Events: ${evtNames || '-'}\n• Final Quote Price: ₹ ${activeQuotation.totalPrice || '0'}\n\nPlease review your custom proposal. We look forward to capturing your timeless story!\n\nWarm regards,\nTimemachine & Co`;
-      
-      const waUrl = cleanPhone
-        ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`
-        : `https://wa.me/?text=${encodeURIComponent(msg)}`;
-      window.open(waUrl, '_blank');
-    });
-  }
-
-  const copyTextBtn = document.getElementById('btn-copy-quote-text');
-  if (copyTextBtn) {
-    copyTextBtn.addEventListener('click', () => {
-      const summaryText = `TIMEMACHINE & CO — LUXURY WEDDING PROPOSAL\n--------------------------------------------\nClient: ${activeQuotation.clientName}\nCouple: ${activeQuotation.coupleNames}\nPhone: ${activeQuotation.phone}\nEmail: ${activeQuotation.email}\n\nEVENTS COVERAGE:\n` +
-        activeQuotation.events.map(e => `- ${e.name} (${e.date}, ${e.location})\n  Crew: ${e.candidPhoto} Candid Photo, ${e.candidVideo} Candid Video, ${e.tradPhoto} Trad Photo, ${e.tradVideo} Trad Video${e.dronePilot ? `, ${e.dronePilot} Drone` : ''}`).join('\n') +
-        `\n\nSERVICES OFFERED:\n` +
-        (activeQuotation.services.pictures ? `• High-Resolution Color-Graded Stills\n` : '') +
-        (activeQuotation.services.films ? `• 4K Cinematic Teaser & Feature Film\n` : '') +
-        (activeQuotation.services.albums ? `• Handcrafted Printed Fine-Art Albums\n` : '') +
-        (activeQuotation.services.videos ? `• Full Length Traditional Video Coverage\n` : '') +
-        `\nFINAL QUOTE PRICE: ₹ ${activeQuotation.totalPrice}\n\nPAYMENT TIMELINE:\n• ${activeQuotation.advancePct}\n• ${activeQuotation.finalPct}\n• Note: ${activeQuotation.hdNote}`;
-
-      navigator.clipboard.writeText(summaryText);
-      showToast('Quotation summary copied to clipboard!');
-    });
-  }
-
-  const saveDraftBtn = document.getElementById('btn-save-quote-draft');
-  if (saveDraftBtn) {
-    saveDraftBtn.addEventListener('click', () => {
-      try {
-        localStorage.setItem('studio_active_quotation', JSON.stringify(activeQuotation));
-        showToast('Proposal draft saved to browser storage!');
-      } catch (e) {
-        showToast('Error saving draft');
-      }
-    });
-  }
-}
-
-// Confetti Effect Generator
-function triggerConfetti() {
-  const canvas = document.createElement('canvas');
-  canvas.style.position = 'fixed';
-  canvas.style.top = '0';
-  canvas.style.left = '0';
-  canvas.style.width = '100vw';
-  canvas.style.height = '100vh';
-  canvas.style.pointerEvents = 'none';
-  canvas.style.zIndex = '99999';
-  document.body.appendChild(canvas);
-
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  const particles = [];
-  const colors = ['#F59E0B', '#FBBF24', '#D4AF37', '#FFFFFF', '#EAB308', '#C5A059'];
-
-  for (let i = 0; i < 150; i++) {
-    particles.push({
-      x: canvas.width / 2,
-      y: canvas.height * 0.45,
-      vx: (Math.random() - 0.5) * 24,
-      vy: (Math.random() - 0.75) * 22,
-      size: Math.random() * 9 + 4,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      alpha: 1,
-      rotation: Math.random() * 360,
-      rSpeed: (Math.random() - 0.5) * 12
-    });
-  }
-
-  let startTime = Date.now();
-  function animate() {
-    const elapsed = Date.now() - startTime;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    particles.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.38;
-      p.alpha -= 0.012;
-      p.rotation += p.rSpeed;
-
-      ctx.save();
-      ctx.globalAlpha = Math.max(0, p.alpha);
-      ctx.translate(p.x, p.y);
-      ctx.rotate((p.rotation * Math.PI) / 180);
-      ctx.fillStyle = p.color;
-      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-      ctx.restore();
-    });
-
-    if (elapsed < 3200) {
-      requestAnimationFrame(animate);
-    } else {
-      canvas.remove();
-    }
-  }
-  animate();
-}
-
-function getCalculatedTotalPrice() {
-  const baseStr = (activeQuotation.totalPrice || '2,50,000').replace(/[^0-9]/g, '');
-  let total = parseInt(baseStr, 10) || 250000;
-
-  if (activeQuotation.addOns.ledWall) total += 25000;
-  if (activeQuotation.addOns.liveStream) total += 15000;
-  if (activeQuotation.addOns.droneCoverage) total += 15000;
-  if (activeQuotation.addOns.extraAlbums > 0) total += 25000 * activeQuotation.addOns.extraAlbums;
-
-  return total.toLocaleString('en-IN');
-}
-
-function renderProposalPreview() {
-  const container = document.getElementById('proposal-template-preview');
-  if (!container) return;
-
-  const isDarkTemplate = activeQuotation.selectedTemplate === 'template2';
-  container.className = isDarkTemplate ? 'proposal-paper-dark' : 'proposal-paper';
-
-  const datesSummary = activeQuotation.events.map(e => e.date).filter(Boolean).join(' • ') || 'Upcoming Wedding Dates';
-  const calculatedTotal = getCalculatedTotalPrice();
-
-  if (isDarkTemplate) {
-    // =========================================================================
-    // TEMPLATE 2: MODERN DARK GLASSMORPHISM LUXURY TEMPLATE
-    // =========================================================================
-    const eventsDarkHtml = activeQuotation.events.map(e => {
-      const crewChips = [];
-      if (e.candidPhoto) crewChips.push(`<span class="proposal-crew-chip">📸 ${e.candidPhoto} Candid Photo${e.candidPhoto > 1 ? 's' : ''}</span>`);
-      if (e.candidVideo) crewChips.push(`<span class="proposal-crew-chip">🎬 ${e.candidVideo} Candid Video${e.candidVideo > 1 ? 's' : ''}</span>`);
-      if (e.tradPhoto) crewChips.push(`<span class="proposal-crew-chip">📷 ${e.tradPhoto} Trad Photo${e.tradPhoto > 1 ? 's' : ''}</span>`);
-      if (e.tradVideo) crewChips.push(`<span class="proposal-crew-chip">🎥 ${e.tradVideo} Trad Video${e.tradVideo > 1 ? 's' : ''}</span>`);
-      if (e.dronePilot) crewChips.push(`<span class="proposal-crew-chip">🚁 ${e.dronePilot} Drone Pilot${e.dronePilot > 1 ? 's' : ''}</span>`);
-
-      const badgesHtml = Array.isArray(e.badges) && e.badges.length > 0 ? `
-        <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.85rem; padding-top: 0.75rem; border-top: 1px solid rgba(245, 158, 11, 0.15);">
-          ${e.badges.map(b => `<span class="proposal-dark-badge" style="font-size: 0.68rem; padding: 0.2rem 0.6rem;">✨ ${b}</span>`).join('')}
-        </div>
-      ` : '';
-
-      return `
-        <div class="proposal-glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.5rem;">
-              <h4 style="font-family: var(--font-heading); font-size: 1.35rem; color: #FFFFFF; margin: 0; font-weight: 600; letter-spacing: -0.01em;">${e.name || 'Event Title'}</h4>
-              <span class="proposal-dark-badge">🗓️ ${e.date || 'Date'}</span>
-            </div>
-            
-            <div style="font-size: 0.88rem; color: #F59E0B; font-family: var(--font-ui); font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.35rem;">
-              📍 ${e.location || 'Location'}
-            </div>
-
-            <div style="margin-bottom: 0.5rem;">
-              <div style="font-size: 0.75rem; font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.1em; color: #A1A1AA; margin-bottom: 0.45rem; font-weight: 600;">Dedicated Crew Breakdown</div>
-              <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
-                ${crewChips.join('') || '<span style="font-size:0.8rem; color:#71717A;">Standard Crew</span>'}
-              </div>
-            </div>
-          </div>
-          ${badgesHtml}
-        </div>
-      `;
-    }).join('');
-
-    container.innerHTML = `
-      <!-- 1. HERO HEADER WITH EDITORIAL LOCKUP -->
-      <div style="margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid rgba(245, 158, 11, 0.2); position: relative;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.25rem;">
-          <div>
-            <div class="proposal-dark-badge" style="margin-bottom: 0.75rem;">✦ LUXURY GLASSMORPHISM PROPOSAL ✦</div>
-            <h1 style="font-family: var(--font-heading); font-size: 2.5rem; margin: 0; font-weight: 400; letter-spacing: -0.02em;" class="proposal-gold-text">
-              Timemachine & Co.
-            </h1>
-            <p style="font-size: 0.95rem; color: #F59E0B; font-family: var(--font-ui); letter-spacing: 0.14em; text-transform: uppercase; margin-top: 0.35rem; font-style: italic;">
-              "Because Every Frame Has a Story to Tell"
-            </p>
-          </div>
-          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; font-family: var(--font-ui);">
-            <div class="proposal-crew-chip" style="background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.4); color: #FBBF24; font-weight: 700;">
-              📞 +91 97056 32982
-            </div>
-            <div class="proposal-crew-chip" style="background: rgba(24, 24, 27, 0.8); border-color: rgba(255, 255, 255, 0.1); color: #A1A1AA;">
-              🌐 timemachineworks.com
-            </div>
-          </div>
-        </div>
-
-        <!-- Personalized Welcome Experience Card -->
-        <div class="proposal-glass-card" style="margin-top: 2rem; text-align: center; border-color: rgba(245, 158, 11, 0.45); background: linear-gradient(145deg, rgba(245, 158, 11, 0.12) 0%, rgba(24, 24, 27, 0.9) 100%);">
-          <span style="font-family: var(--font-ui); font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase; color: #FBBF24; font-weight: 700;">PROPOSAL PREPARED ESPECIALLY FOR</span>
-          <h2 style="font-family: var(--font-heading); font-size: 2.2rem; color: #FFFFFF; margin: 0.35rem 0 0.2rem 0; font-style: italic;">${activeQuotation.clientName || 'Bhavya Allu'}</h2>
-          <p style="font-size: 0.95rem; color: #D4D4D8; margin: 0.2rem 0 0.85rem 0;">${activeQuotation.coupleNames || 'Groom: Anish • Bride: Bhavya Allu'}</p>
-          <div style="font-size: 0.82rem; color: #F59E0B; font-family: var(--font-ui); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(245, 158, 11, 0.1); padding: 0.4rem 1rem; border-radius: 999px; border: 1px solid rgba(245, 158, 11, 0.3);">
-            ✨ CELEBRATING YOUR WEDDING STORY &nbsp;•&nbsp; 🗓️ ${datesSummary}
-          </div>
-        </div>
-      </div>
-
-      <!-- 2. EVENT SCHEDULE -->
-      <div style="margin-bottom: 3.25rem;">
-        <div style="text-align: center; margin-bottom: 2rem;">
-          <span style="font-family: var(--font-ui); font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase; color: #F59E0B; font-weight: 700;">CELEBRATION SCHEDULE</span>
-          <h3 style="font-family: var(--font-heading); font-size: 1.8rem; color: #FFFFFF; margin-top: 0.25rem; font-weight: 400;">Event Schedule & Crew Breakdown</h3>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.35rem;">
-          ${eventsDarkHtml}
-        </div>
-      </div>
-
-      <!-- 3. CORE DELIVERABLES GRID -->
-      <div style="margin-bottom: 3.25rem;">
-        <div style="text-align: center; margin-bottom: 2rem;">
-          <span style="font-family: var(--font-ui); font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase; color: #F59E0B; font-weight: 700;">EDITORIAL OUTPUTS</span>
-          <h3 style="font-family: var(--font-heading); font-size: 1.8rem; color: #FFFFFF; margin-top: 0.25rem; font-weight: 400;">Core Deliverables Archive</h3>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.35rem;">
-          <div class="proposal-glass-card">
-            <div style="font-size: 1.8rem; margin-bottom: 0.6rem; color: #FBBF24;">📸</div>
-            <h4 style="font-family: var(--font-heading); font-size: 1.2rem; color: #FFFFFF; margin: 0 0 0.35rem 0;">1,000 Edited Stills</h4>
-            <p style="font-size: 0.85rem; color: #A1A1AA; margin: 0; line-height: 1.6;">60-day cloud gallery delivery with signature color grading & high-res printing rights.</p>
-          </div>
-
-          <div class="proposal-glass-card">
-            <div style="font-size: 1.8rem; margin-bottom: 0.6rem; color: #FBBF24;">🎬</div>
-            <h4 style="font-family: var(--font-heading); font-size: 1.2rem; color: #FFFFFF; margin: 0 0 0.35rem 0;">Cinematic HD Film</h4>
-            <p style="font-size: 0.85rem; color: #A1A1AA; margin: 0; line-height: 1.6;">4K Teaser & Feature Film (60-day delivery, 1 round of revisions included).</p>
-          </div>
-
-          <div class="proposal-glass-card">
-            <div style="font-size: 1.8rem; margin-bottom: 0.6rem; color: #FBBF24;">🎥</div>
-            <h4 style="font-family: var(--font-heading); font-size: 1.2rem; color: #FFFFFF; margin: 0 0 0.35rem 0;">Traditional Film</h4>
-            <p style="font-size: 0.85rem; color: #A1A1AA; margin: 0; line-height: 1.6;">Full uncut documentary video coverage of ceremony proceedings (75-day delivery).</p>
-          </div>
-
-          <div class="proposal-glass-card">
-            <div style="font-size: 1.8rem; margin-bottom: 0.6rem; color: #FBBF24;">📖</div>
-            <h4 style="font-family: var(--font-heading); font-size: 1.2rem; color: #FFFFFF; margin: 0 0 0.35rem 0;">3 Signature Albums</h4>
-            <p style="font-size: 0.85rem; color: #A1A1AA; margin: 0; line-height: 1.6;">Handcrafted fine-art printed albums (40 sheets each; extra sheets @ ₹600/sheet).</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- 4. REAL-TIME DYNAMIC PRICE CALCULATOR -->
-      <div style="margin-bottom: 3.25rem;">
-        <div class="proposal-dark-price-box">
-          <span style="font-family: var(--font-ui); font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; color: #FBBF24; font-weight: 800;">DYNAMIC INVESTMENT CALCULATOR</span>
-          <p style="font-size: 1.05rem; color: #E4E4E7; margin: 0.75rem 0 0.25rem 0; font-family: var(--font-paragraph);">
-            Dear <strong style="color: #FFFFFF;">${activeQuotation.clientName || 'Bhavya Allu'}</strong>, your calculated total investment is:
-          </p>
-          
-          <div class="proposal-dark-price-val">₹ ${calculatedTotal}</div>
-          
-          <div style="font-size: 0.85rem; color: #A1A1AA; margin-top: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
-            <span class="proposal-crew-chip">Base Package: ₹${activeQuotation.totalPrice || '2,50,000'}</span>
-            ${activeQuotation.addOns.ledWall ? `<span class="proposal-crew-chip" style="color:#FBBF24; border-color:#F59E0B;">+ LED Wall (₹25k)</span>` : ''}
-            ${activeQuotation.addOns.liveStream ? `<span class="proposal-crew-chip" style="color:#FBBF24; border-color:#F59E0B;">+ Live Stream (₹15k)</span>` : ''}
-            ${activeQuotation.addOns.droneCoverage ? `<span class="proposal-crew-chip" style="color:#FBBF24; border-color:#F59E0B;">+ Drone (₹15k)</span>` : ''}
-            ${activeQuotation.addOns.extraAlbums > 0 ? `<span class="proposal-crew-chip" style="color:#FBBF24; border-color:#F59E0B;">+ ${activeQuotation.addOns.extraAlbums} Extra Album(s)</span>` : ''}
-          </div>
-        </div>
-      </div>
-
-      <!-- 5. TERMS & POLICIES -->
-      <div style="margin-bottom: 3.25rem;">
-        <div style="text-align: center; margin-bottom: 2rem;">
-          <span style="font-family: var(--font-ui); font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase; color: #F59E0B; font-weight: 700;">TRANSPARENT TERMS</span>
-          <h3 style="font-family: var(--font-heading); font-size: 1.8rem; color: #FFFFFF; margin-top: 0.25rem; font-weight: 400;">Terms & Policies</h3>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem;">
-          <div class="proposal-glass-card" style="font-size: 0.88rem;">
-            <strong style="color: #FBBF24; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">✈️ Travel & Accommodations</strong>
-            <p style="color: #A1A1AA; margin: 0; line-height: 1.6;">Travel & stay to be arranged by client for events outside Hyderabad.</p>
-          </div>
-
-          <div class="proposal-glass-card" style="font-size: 0.88rem;">
-            <strong style="color: #FBBF24; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">💳 Payment Retainer Schedule</strong>
-            <p style="color: #A1A1AA; margin: 0; line-height: 1.6;">50% booking retainer, 50% balance prior to raw footage handover.</p>
-          </div>
-
-          <div class="proposal-glass-card" style="font-size: 0.88rem;">
-            <strong style="color: #FBBF24; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">💾 Data Safety & Storage</strong>
-            <p style="color: #A1A1AA; margin: 0; line-height: 1.6;">Requirement of two 4TB external hard drives for client data safety.</p>
-          </div>
-
-          <div class="proposal-glass-card" style="font-size: 0.88rem;">
-            <strong style="color: #FBBF24; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.4rem;">🔒 Non-Refundable Policy</strong>
-            <p style="color: #A1A1AA; margin: 0; line-height: 1.6;">Booking retainers are non-refundable upon cancellation.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- 6. ACCEPT PROPOSAL & RESERVE DATE BUTTON -->
-      <div style="text-align: center;">
-        <button type="button" class="proposal-accept-btn" id="btn-accept-proposal">
-          ✨ Accept Proposal & Reserve Date
-        </button>
-        <p style="font-size: 0.8rem; color: #71717A; margin-top: 0.85rem; font-family: var(--font-ui);">
-          Clicking reserves your dates & notifies lead cinematographer via instant dispatch.
-        </p>
-      </div>
-    `;
-
-    // Attach Accept Proposal event listener
-    const acceptBtn = document.getElementById('btn-accept-proposal');
-    if (acceptBtn) {
-      acceptBtn.addEventListener('click', () => {
-        triggerConfetti();
-        const modal = document.getElementById('proposal-confirm-modal');
-        const modalText = document.getElementById('modal-confirm-client-text');
-        if (modalText) {
-          modalText.textContent = `Thank you, ${activeQuotation.clientName || 'Bhavya Allu'}! Your wedding dates (${datesSummary}) have been provisionally reserved in our studio master calendar with a total investment of ₹ ${calculatedTotal}.`;
-        }
-        if (modal) modal.classList.add('active');
-      });
-    }
-
-    const closeModalBtn = document.getElementById('btn-close-confirm-modal');
-    if (closeModalBtn) {
-      closeModalBtn.addEventListener('click', () => {
-        const modal = document.getElementById('proposal-confirm-modal');
-        if (modal) modal.classList.remove('active');
-      });
-    }
-  } else {
-    // =========================================================================
-    // TEMPLATE 1: FINE ART WARM CREAM LUXURY TEMPLATE (Matching Reference Images)
-    // =========================================================================
-    const eventsHtml = activeQuotation.events.map(e => {
-      const crewLines = [];
-      if (e.candidPhoto) crewLines.push(`${e.candidPhoto} Candid Photographer${e.candidPhoto > 1 ? 's' : ''}`);
-      if (e.candidVideo) crewLines.push(`${e.candidVideo} Candid Videographer${e.candidVideo > 1 ? 's' : ''}`);
-      if (e.tradPhoto) crewLines.push(`${e.tradPhoto} Traditional Photographer${e.tradPhoto > 1 ? 's' : ''}`);
-      if (e.tradVideo) crewLines.push(`${e.tradVideo} Traditional Videographer${e.tradVideo > 1 ? 's' : ''}`);
-      if (e.dronePilot) crewLines.push(`${e.dronePilot} Drone Pilot${e.dronePilot > 1 ? 's' : ''}`);
-
-      return `
-        <div style="background: #F3EBDD; border-radius: 12px; padding: 1.5rem; min-height: 160px; border: 1px solid rgba(197, 160, 89, 0.25); display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="font-size: 0.88rem; color: #55524E; font-family: var(--font-paragraph); margin-bottom: 0.4rem; font-weight: 500;">
-              ${e.date || 'TBD Date'} | ${e.location || 'Location'}
-            </div>
-            <h4 style="font-family: var(--font-heading); font-size: 1.4rem; color: #1A1816; margin: 0 0 0.85rem 0; font-weight: 700;">
-              ${e.name || 'Event Title'}
-            </h4>
-            ${crewLines.length > 0 ? `
-              <div style="font-size: 0.88rem; color: #2C2622; line-height: 1.65; border-top: 1px solid rgba(197, 160, 89, 0.2); padding-top: 0.6rem;">
-                ${crewLines.map(c => `<div>${c}</div>`).join('')}
-              </div>
-            ` : ''}
-          </div>
-        </div>
-      `;
-    }).join('');
-
-    const svcs = activeQuotation.services;
-
-    container.innerHTML = `
-      <!-- PAGE 1: COVER PAGE (Matching Reference Image 1) -->
-      <div class="proposal-section-page" style="text-align: center; padding-top: 1rem;">
-        <!-- Tagline Line (Italic Serif) -->
-        <h3 style="font-family: var(--font-heading); font-size: 1.85rem; color: #1A1816; font-weight: 400; font-style: italic; margin: 0 0 0.3rem 0;">
-          Timemachine & Co,
-        </h3>
-
-        <!-- Main Headline (Bold Headline) -->
-        <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: #1A1816; font-weight: 700; margin: 0 0 0.75rem 0; letter-spacing: -0.02em;">
-          Capturing Your Forever Story
-        </h1>
-
-        <!-- Subtitle -->
-        <p style="font-size: 0.95rem; color: #55524E; max-width: 580px; margin: 0 auto 1.5rem auto; line-height: 1.6;">
-          Exclusive Fine Art Wedding Photography & Cinematography Proposal prepared for <strong>${activeQuotation.clientName || 'Bhavya Allu'}</strong>.
-        </p>
-
-        <!-- Dark Pill Button -->
-        <div style="margin-bottom: 2.5rem;">
-          <span style="display: inline-flex; align-items: center; gap: 0.5rem; background: #1A1816; color: #FFFFFF; font-family: var(--font-ui); font-size: 0.85rem; font-weight: 600; padding: 0.6rem 1.4rem; border-radius: 999px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
-            Prepared for ${activeQuotation.clientName || 'Bhavya Allu'} →
-          </span>
-        </div>
-
-        <!-- 3D CURVED ARC GALLERY SHOWCASE (Matching Image 1) -->
-        <div style="perspective: 1000px; display: flex; justify-content: center; align-items: center; gap: 0.35rem; margin: 1.5rem 0; padding: 1rem 0; overflow: hidden; width: 100%; box-sizing: border-box;">
-          <!-- Card -3 -->
-          <div style="width: 80px; height: 160px; border-radius: 12px; overflow: hidden; transform: rotateY(34deg) scale(0.78); opacity: 0.82; flex-shrink: 0; box-shadow: 0 8px 16px rgba(0,0,0,0.12);">
-            <img src="./images/niharika/groom-lighting.jpg" alt="Gallery 1" style="width:100%; height:100%; object-fit:cover;">
-          </div>
-          <!-- Card -2 -->
-          <div style="width: 85px; height: 180px; border-radius: 12px; overflow: hidden; transform: rotateY(22deg) scale(0.88); opacity: 0.92; flex-shrink: 0; box-shadow: 0 10px 20px rgba(0,0,0,0.14);">
-            <img src="./images/niharika/bridal-braid.jpg" alt="Gallery 2" style="width:100%; height:100%; object-fit:cover;">
-          </div>
-          <!-- Card -1 -->
-          <div style="width: 92px; height: 200px; border-radius: 12px; overflow: hidden; transform: rotateY(10deg) scale(0.96); flex-shrink: 0; box-shadow: 0 12px 24px rgba(0,0,0,0.16);">
-            <img src="./images/niharika/lotus-portrait.jpg" alt="Gallery 3" style="width:100%; height:100%; object-fit:cover;">
-          </div>
-          <!-- Card 0 (Center) -->
-          <div style="width: 105px; height: 220px; border-radius: 12px; overflow: hidden; transform: rotateY(0deg) scale(1.05) translateZ(15px); flex-shrink: 0; z-index: 5; box-shadow: 0 16px 35px rgba(0,0,0,0.22); border: 2px solid rgba(197, 160, 89, 0.4);">
-            <img src="./images/niharika/main-shrine-couple.jpg" alt="Gallery 4" style="width:100%; height:100%; object-fit:cover;">
-          </div>
-          <!-- Card +1 -->
-          <div style="width: 92px; height: 200px; border-radius: 12px; overflow: hidden; transform: rotateY(-10deg) scale(0.96); flex-shrink: 0; box-shadow: 0 12px 24px rgba(0,0,0,0.16);">
-            <img src="./images/niharika/couple-doorway.jpg" alt="Gallery 5" style="width:100%; height:100%; object-fit:cover;">
-          </div>
-          <!-- Card +2 -->
-          <div style="width: 85px; height: 180px; border-radius: 12px; overflow: hidden; transform: rotateY(-22deg) scale(0.88); opacity: 0.92; flex-shrink: 0; box-shadow: 0 10px 20px rgba(0,0,0,0.14);">
-            <img src="./images/niharika/pooja-lighting.jpg" alt="Gallery 6" style="width:100%; height:100%; object-fit:cover;">
-          </div>
-          <!-- Card +3 -->
-          <div style="width: 80px; height: 160px; border-radius: 12px; overflow: hidden; transform: rotateY(-34deg) scale(0.78); opacity: 0.82; flex-shrink: 0; box-shadow: 0 8px 16px rgba(0,0,0,0.12);">
-            <img src="./images/niharika/mandapam-garland.jpg" alt="Gallery 7" style="width:100%; height:100%; object-fit:cover;">
-          </div>
-        </div>
-
-        <!-- 3-COLUMN FEATURE GRID BELOW ARC (Matching Image 1 bottom) -->
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; text-align: left; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(197, 160, 89, 0.2);">
-          <div style="border-right: 1px solid rgba(197, 160, 89, 0.25); padding-right: 1.25rem;">
-            <h4 style="font-family: var(--font-heading); font-size: 1.15rem; color: #1A1816; margin: 0 0 0.4rem 0; font-weight: 600;">Fine Art Stills</h4>
-            <p style="font-size: 0.82rem; color: #55524E; line-height: 1.6; margin: 0;">1,000 fully edited images from all events, portraying your wedding story, delivered on cloud within 60 days.</p>
-          </div>
-
-          <div style="border-right: 1px solid rgba(197, 160, 89, 0.25); padding-right: 1.25rem;">
-            <h4 style="font-family: var(--font-heading); font-size: 1.15rem; color: #1A1816; margin: 0 0 0.4rem 0; font-weight: 600;">Cinematic HD Films</h4>
-            <p style="font-size: 0.82rem; color: #55524E; line-height: 1.6; margin: 0;">4K Teaser trailer + Full Feature Film with original audio remastering & color grading, delivered on cloud within 60 days.</p>
-          </div>
-
-          <div>
-            <h4 style="font-family: var(--font-heading); font-size: 1.15rem; color: #1A1816; margin: 0 0 0.4rem 0; font-weight: 600;">Signature Albums</h4>
-            <p style="font-size: 0.82rem; color: #55524E; line-height: 1.6; margin: 0;">3 printed albums (40 sheets each) crafted with Italian leather & velvet hardcover finish for timeless family heirlooms.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- PAGE 2: ABOUT US (Matching Reference Image 2) -->
-      <div class="proposal-section-page">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center;">
-          <!-- Left Overlapping Photos Block -->
-          <div style="position: relative; height: 380px; width: 100%;">
-            <!-- Accent Line behind images -->
-            <div style="position: absolute; left: 0; top: 40%; width: 100%; height: 1px; background: #C5A059; opacity: 0.5; z-index: 1;"></div>
-            
-            <!-- Top Right Horizontal Floating Image -->
-            <div style="position: absolute; top: 0; right: 5%; width: 62%; height: 200px; border-radius: 16px; overflow: hidden; box-shadow: 0 14px 35px rgba(0,0,0,0.14); z-index: 2; border: 1px solid #EAE3D2;">
-              <img src="./images/niharika/doorway-portrait.jpg" alt="About Showcase 1" style="width:100%; height:100%; object-fit:cover;">
-            </div>
-
-            <!-- Bottom Left Vertical Floating Image -->
-            <div style="position: absolute; top: 80px; left: 2%; width: 55%; height: 280px; border-radius: 16px; overflow: hidden; box-shadow: 0 18px 45px rgba(0,0,0,0.18); z-index: 3; border: 2px solid #FFFFFF;">
-              <img src="./images/niharika/pooja-prayer.jpg" alt="About Showcase 2" style="width:100%; height:100%; object-fit:cover;">
-            </div>
-          </div>
-
-          <!-- Right Text Content Block -->
-          <div style="padding-left: 1rem;">
-            <div style="font-family: var(--font-ui); font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: #C5A059; font-weight: 700; margin-bottom: 0.4rem;">
-              OUR CINEMATIC JOURNEY
-            </div>
-            <h2 style="font-family: var(--font-heading); font-size: 2.2rem; color: #1A1816; margin: 0 0 1.25rem 0; font-weight: 400;">
-              About Us
-            </h2>
-
-            <p style="font-family: var(--font-ui); font-size: 0.85rem; color: #3A3733; line-height: 1.8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1.25rem;">
-              AT TIMEMACHINE & CO, WE FREEZE FLEETING MOMENTS TO MAKE YOUR FOREVER LOVE STORY A TIMELESS MASTERPIECE. OUR SHARED PASSION FOR CINEMA, ART, AND VISUAL STORYTELLING BRINGS OUT THE MAGIC OF YOUR WEDDING INTO A TAPESTRY OF EMOTIONS.
-            </p>
-
-            <p style="font-family: var(--font-ui); font-size: 0.85rem; color: #55524E; line-height: 1.8; text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">
-              WE WEAVE TRADITIONS, RITUALS, AND ELEGANT MOMENTS INTO VISUAL HEIRLOOMS TO BE TREASURED FOR GENERATIONS TO COME. DISCUSS DETAILS WITH OUR LEAD CINEMATOGRAPHERS AND EMBARK ON A SEAMLESS VISUAL JOURNEY.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- PAGE 3: YOUR EVENTS (Matching Reference Image 3) -->
-      <div class="proposal-section-page">
-        <h2 style="font-family: var(--font-heading); font-size: 2.2rem; color: #1A1816; margin: 0 0 1.75rem 0; font-weight: 700;">
-          Your Events
-        </h2>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.25rem;">
-          ${eventsHtml || '<p style="text-align:center;">No events configured.</p>'}
-        </div>
-      </div>
-
-      <!-- PAGE 4: SERVICES OFFERED & PRICING (Matching Reference Image 4) -->
-      <div class="proposal-section-page">
-        <h2 style="font-family: var(--font-heading); font-size: 2.2rem; color: #1A1816; margin: 0 0 1.75rem 0; font-weight: 700;">
-          Services Offered
-        </h2>
-
-        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
-          ${svcs.pictures ? `
-            <div style="background: #F3EBDD; border-radius: 12px; padding: 1.5rem;">
-              <h4 style="font-family: var(--font-heading); font-size: 1.2rem; color: #1A1816; margin: 0 0 0.5rem 0; font-weight: 600;">Edited Pictures</h4>
-              <p style="font-size: 0.92rem; color: #2C2622; line-height: 1.65; margin: 0;">
-                You shall receive 1,000 fully edited images from all events, portraying your wedding story, delivered on the cloud within 60 days from payment clearance.
-              </p>
-            </div>
-          ` : ''}
-
-          ${svcs.films ? `
-            <div style="background: #F3EBDD; border-radius: 12px; padding: 1.5rem;">
-              <h4 style="font-family: var(--font-heading); font-size: 1.2rem; color: #1A1816; margin: 0 0 0.5rem 0; font-weight: 600;">Cinematic Wedding Films</h4>
-              <p style="font-size: 0.92rem; color: #2C2622; line-height: 1.65; margin: 0 0 0.8rem 0;">
-                1 cinematic HD film with the best footage from your events, edited according to our style, to be delivered on cloud within 60 days from payment clearance. You can suggest any number of changes but all at once and within a week of delivery.
-              </p>
-              <div style="font-size: 0.85rem; color: #55524E; font-style: italic;">
-                *Changes will be accepted only once from 2nd time Rs 15,000 will be charged extra.
-              </div>
-            </div>
-          ` : ''}
-
-          ${svcs.albums ? `
-            <div style="background: #F3EBDD; border-radius: 12px; padding: 1.5rem;">
-              <h4 style="font-family: var(--font-heading); font-size: 1.2rem; color: #1A1816; margin: 0 0 0.5rem 0; font-weight: 600;">Printed Albums</h4>
-              <p style="font-size: 0.92rem; color: #2C2622; line-height: 1.65; margin: 0;">
-                You shall receive 3 Printed albums from the best events each album has 40 sheets. An extra sheet will incur an additional charge of ₹600 per sheet.
-              </p>
-            </div>
-          ` : ''}
-
-          ${svcs.videos ? `
-            <div style="background: #F3EBDD; border-radius: 12px; padding: 1.5rem;">
-              <h4 style="font-family: var(--font-heading); font-size: 1.2rem; color: #1A1816; margin: 0 0 0.5rem 0; font-weight: 600;">Traditional Videos</h4>
-              <p style="font-size: 0.92rem; color: #2C2622; line-height: 1.65; margin: 0;">
-                You shall receive 5 long traditional video of all events in documentary style, delivered within 75 days from payment clearance.
-              </p>
-            </div>
-          ` : ''}
-        </div>
-
-        <div style="text-align: center; margin: 3rem 0 2rem 0;">
-          <!-- Custom Gold Star Line Divider matching Image 4 -->
-          <svg width="280" height="20" viewBox="0 0 280 20" fill="none" style="margin: 0 auto; display: block;">
-            <line x1="0" y1="10" x2="110" y2="10" stroke="#C5A059" stroke-width="1.2" opacity="0.6"></line>
-            <circle cx="110" cy="10" r="3" fill="#C5A059"></circle>
-            <path d="M140 3 L143 10 L140 17 L137 10 Z" fill="#C5A059"></path>
-            <circle cx="170" cy="10" r="3" fill="#C5A059"></circle>
-            <line x1="170" y1="10" x2="280" y2="10" stroke="#C5A059" stroke-width="1.2" opacity="0.6"></line>
-          </svg>
-
-          <!-- Quote Price Callout Box matching Image 4 -->
-          <div style="padding: 2.5rem 1rem;">
-            <h3 style="font-family: var(--font-heading); font-size: 2.2rem; color: #C5A059; margin: 0 0 0.5rem 0; font-weight: 700;">
-              Dear ${activeQuotation.clientName || 'Bhavya Allu'}
-            </h3>
-            <p style="font-size: 1rem; color: #2C2622; margin: 0 0 1.25rem 0; font-family: var(--font-paragraph);">
-              Your final quote price would be
-            </p>
-            <div style="font-family: var(--font-heading); font-size: 3.2rem; color: #C5A059; font-weight: 700;">
-              ₹${calculatedTotal || activeQuotation.totalPrice || '2,50,000'}
-            </div>
-          </div>
-
-          <svg width="280" height="20" viewBox="0 0 280 20" fill="none" style="margin: 0 auto; display: block;">
-            <line x1="0" y1="10" x2="110" y2="10" stroke="#C5A059" stroke-width="1.2" opacity="0.6"></line>
-            <circle cx="110" cy="10" r="3" fill="#C5A059"></circle>
-            <path d="M140 3 L143 10 L140 17 L137 10 Z" fill="#C5A059"></path>
-            <circle cx="170" cy="10" r="3" fill="#C5A059"></circle>
-            <line x1="170" y1="10" x2="280" y2="10" stroke="#C5A059" stroke-width="1.2" opacity="0.6"></line>
-          </svg>
-        </div>
-      </div>
-
-      <!-- PAGE 5: PAYMENT TIMELINE & POLICY -->
-      <div class="proposal-section-page">
-        <div style="text-align: center; margin-bottom: 2rem;">
-          <span style="font-family: var(--font-ui); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: #C5A059; font-weight: 700;">COMMISSION TERMS</span>
-          <h2 style="font-family: var(--font-heading); font-size: 1.6rem; color: #1A1816; margin-top: 0.2rem; font-weight: 400;">Payment Timeline & Policy</h2>
-        </div>
-
-        <div class="proposal-card-grid">
-          <div class="proposal-event-card">
-            <h4 style="font-family: var(--font-heading); font-size: 1.05rem; margin: 0 0 0.3rem 0; color: #1A1816;">Advance Payment (50%)</h4>
-            <p style="font-size: 0.85rem; color: #55524E; margin: 0; line-height: 1.5;">${activeQuotation.advancePct || '50% Advance Upon Booking Confirmation'}</p>
-          </div>
-
-          <div class="proposal-event-card">
-            <h4 style="font-family: var(--font-heading); font-size: 1.05rem; margin: 0 0 0.3rem 0; color: #1A1816;">Final Payment (50%)</h4>
-            <p style="font-size: 0.85rem; color: #55524E; margin: 0; line-height: 1.5;">${activeQuotation.finalPct || '50% Balance Prior to First Event Date'}</p>
-          </div>
-        </div>
-
-        <div style="background: #F5F1E8; border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 8px; padding: 1.25rem; margin-top: 1.25rem;">
-          <strong style="font-size: 0.88rem; color: #1A1816; display: flex; align-items: center; gap: 0.4rem;">
-            💾 Raw Footage Hard Drive Requirement:
-          </strong>
-          <p style="font-size: 0.82rem; color: #55524E; margin: 0.3rem 0 0 0; line-height: 1.5;">
-            ${activeQuotation.hdNote || 'Client to provide two 4TB high-speed USB-C External Hard Drives for raw footage & master video delivery.'}
-          </p>
-        </div>
-      </div>
-
-      <!-- PAGE 6: CINEMATIC VIDEO SHOWCASE & CLICKABLE CONTACT DETAILS -->
-      <div class="proposal-section-page">
-        <!-- VIDEO PLAYER SECTION -->
-        <div style="text-align: center; margin-bottom: 2rem;">
-          <span style="font-family: var(--font-ui); font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: #C5A059; font-weight: 700;">CINEMATIC SHOWCASE</span>
-          <h2 style="font-family: var(--font-heading); font-size: 2.2rem; color: #1A1816; margin-top: 0.2rem; font-weight: 700;">
-            Experience Our Wedding Films
-          </h2>
-          <p style="font-size: 0.92rem; color: #55524E; max-width: 600px; margin: 0.4rem auto 0 auto; line-height: 1.6;">
-            A glimpse into the fine-art cinematography and emotional visual storytelling crafted by Timemachine & Co.
-          </p>
-        </div>
-
-        <div style="position: relative; width: 100%; max-width: 820px; margin: 0 auto 3.5rem auto; border-radius: 16px; overflow: hidden; box-shadow: 0 18px 45px rgba(0,0,0,0.16); border: 2px solid #EAE3D2;">
-          <video controls poster="./videos/preview_check.jpg" playsinline style="width: 100%; display: block; max-height: 440px; object-fit: cover;">
-            <source src="./videos/hero-wedding.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-        </div>
-
-        <!-- CLICKABLE ADDRESS & CONTACT DETAILS SECTION -->
-        <div style="text-align: center; margin-bottom: 1.75rem;">
-          <!-- Gold Star Line Divider -->
-          <svg width="280" height="20" viewBox="0 0 280 20" fill="none" style="margin: 0 auto 1.5rem auto; display: block;">
-            <line x1="0" y1="10" x2="110" y2="10" stroke="#C5A059" stroke-width="1.2" opacity="0.6"></line>
-            <circle cx="110" cy="10" r="3" fill="#C5A059"></circle>
-            <path d="M140 3 L143 10 L140 17 L137 10 Z" fill="#C5A059"></path>
-            <circle cx="170" cy="10" r="3" fill="#C5A059"></circle>
-            <line x1="170" y1="10" x2="280" y2="10" stroke="#C5A059" stroke-width="1.2" opacity="0.6"></line>
-          </svg>
-
-          <span style="font-family: var(--font-ui); font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: #C5A059; font-weight: 700;">GET IN TOUCH WITH US</span>
-          <h3 style="font-family: var(--font-heading); font-size: 1.85rem; color: #1A1816; margin-top: 0.2rem; font-weight: 700;">
-            Studio Contact & Location
-          </h3>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; width: 100%; max-width: 100%; box-sizing: border-box; margin-bottom: 2.5rem;">
-          <!-- CLICKABLE PHONE / WHATSAPP -->
-          <a href="https://wa.me/919705632982" target="_blank" rel="noopener noreferrer" style="text-decoration: none; display: flex; flex-direction: column; align-items: center; text-align: center; background: #F3EBDD; border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 12px; padding: 1.5rem; transition: transform 0.2s ease, box-shadow 0.2s ease;">
-            <div style="width: 46px; height: 46px; border-radius: 50%; background: #1A1816; color: #C5A059; display: flex; align-items: center; justify-content: center; margin-bottom: 0.85rem; box-shadow: 0 4px 12px rgba(0,0,0,0.12);">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-            </div>
-            <span style="font-family: var(--font-ui); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: #C5A059; font-weight: 700; margin-bottom: 0.35rem;">PHONE & WHATSAPP</span>
-            <span style="font-size: 0.95rem; font-weight: 700; color: #1A1816;">+91 97056 32982</span>
-            <span style="font-size: 0.75rem; color: #55524E; margin-top: 0.2rem;">Click to chat / call</span>
-          </a>
-
-          <!-- CLICKABLE EMAIL -->
-          <a href="mailto:info@timemachineworks.com" target="_blank" style="text-decoration: none; display: flex; flex-direction: column; align-items: center; text-align: center; background: #F3EBDD; border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 12px; padding: 1.5rem; transition: transform 0.2s ease, box-shadow 0.2s ease;">
-            <div style="width: 46px; height: 46px; border-radius: 50%; background: #1A1816; color: #C5A059; display: flex; align-items: center; justify-content: center; margin-bottom: 0.85rem; box-shadow: 0 4px 12px rgba(0,0,0,0.12);">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-            </div>
-            <span style="font-family: var(--font-ui); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: #C5A059; font-weight: 700; margin-bottom: 0.35rem;">EMAIL INQUIRIES</span>
-            <span style="font-size: 0.9rem; font-weight: 700; color: #1A1816; word-break: break-all;">info@timemachineworks.com</span>
-            <span style="font-size: 0.75rem; color: #55524E; margin-top: 0.2rem;">Click to send email</span>
-          </a>
-
-          <!-- CLICKABLE INSTAGRAM -->
-          <a href="https://www.instagram.com/timemachineworks" target="_blank" rel="noopener noreferrer" style="text-decoration: none; display: flex; flex-direction: column; align-items: center; text-align: center; background: #F3EBDD; border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 12px; padding: 1.5rem; transition: transform 0.2s ease, box-shadow 0.2s ease;">
-            <div style="width: 46px; height: 46px; border-radius: 50%; background: #1A1816; color: #C5A059; display: flex; align-items: center; justify-content: center; margin-bottom: 0.85rem; box-shadow: 0 4px 12px rgba(0,0,0,0.12);">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-            </div>
-            <span style="font-family: var(--font-ui); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: #C5A059; font-weight: 700; margin-bottom: 0.35rem;">INSTAGRAM</span>
-            <span style="font-size: 0.95rem; font-weight: 700; color: #1A1816;">@timemachineworks</span>
-            <span style="font-size: 0.75rem; color: #55524E; margin-top: 0.2rem;">Click to open profile</span>
-          </a>
-
-          <!-- CLICKABLE ADDRESS / LOCATION -->
-          <a href="https://maps.google.com/?q=Timemachine+%26+Co,+Jubilee+Hills,+Hyderabad" target="_blank" rel="noopener noreferrer" style="text-decoration: none; display: flex; flex-direction: column; align-items: center; text-align: center; background: #F3EBDD; border: 1px solid rgba(197, 160, 89, 0.3); border-radius: 12px; padding: 1.5rem; transition: transform 0.2s ease, box-shadow 0.2s ease;">
-            <div style="width: 46px; height: 46px; border-radius: 50%; background: #1A1816; color: #C5A059; display: flex; align-items: center; justify-content: center; margin-bottom: 0.85rem; box-shadow: 0 4px 12px rgba(0,0,0,0.12);">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-            </div>
-            <span style="font-family: var(--font-ui); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: #C5A059; font-weight: 700; margin-bottom: 0.35rem;">STUDIO LOCATION</span>
-            <span style="font-size: 0.88rem; font-weight: 700; color: #1A1816; line-height: 1.4;">Jubilee Hills, Road 36,<br>Hyderabad & Guntur</span>
-            <span style="font-size: 0.75rem; color: #55524E; margin-top: 0.2rem;">Click for Google Maps</span>
-          </a>
-        </div>
-
-        <div style="font-size: 0.78rem; color: #8C8780; text-align: center; border-top: 1px solid rgba(197, 160, 89, 0.2); padding-top: 1.5rem;">
-          Timemachine & Co • Fine Art Wedding Cinematography & Photography • All Rights Reserved.
-        </div>
-      </div>
-    `;
-  }
-}
-
-
-// ==========================================================================
 // 4. LOAD SITE CONTENT (FROM MONGODB OR DEFAULTS)
 // ==========================================================================
 async function loadContent() {
@@ -2336,6 +1221,2159 @@ function showToast(msg) {
   }, 3500);
 }
 
+// ==========================================================================
+// 7. QUOTATION GENERATOR & LUXURY PROPOSAL BUILDER (TEMPLATE 2 + TEMPLATE 1)
+// ==========================================================================
+function escapeHtml(str) {
+  if (typeof str !== 'string') return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+let activeQuotation = {
+  clientName: 'Bhavya Alapati',
+  coupleNames: 'Groom: Anish • Bride: Bhavya Alapati',
+  clientPhone: '+91 97056 32982',
+  clientEmail: 'bhavya.alapati@wedding.com',
+  basePrice: '',
+  selectedTemplate: 'template2',
+  events: [
+    { id: 'e1', date: '11 Feb 2027', location: 'Guntur', title: 'Engagement', candidPhoto: 1, candidVideo: 1, tradPhoto: 1, tradVideo: 1 },
+    { id: 'e2', date: '25 Feb 2027', location: 'Hyderabad', title: 'Wedding', candidPhoto: 1, candidVideo: 1, tradPhoto: 1, tradVideo: 1 },
+    { id: 'e3', date: '23 Feb 2027', location: 'Hyderabad', title: 'Pellikoduku', candidPhoto: 1, candidVideo: 1, tradPhoto: 1, tradVideo: 1 },
+    { id: 'e4', date: '23 Feb 2027', location: 'Hyderabad', title: 'Bride Ceremony', candidPhoto: 1, candidVideo: 1, tradPhoto: 1, tradVideo: 1 },
+    { id: 'e5', date: '24 Feb 2027', location: 'Hyderabad', title: 'Haldi', candidPhoto: 1, candidVideo: 1, tradPhoto: 1, tradVideo: 1 },
+    { id: 'e6', date: '24 Feb 2027', location: 'Hyderabad', title: 'Sangeeth', candidPhoto: 1, candidVideo: 1, tradPhoto: 1, tradVideo: 1 },
+    { id: 'e7', date: '25 Feb 2027', location: 'Hyderabad', title: 'Mehendi', candidPhoto: 1, candidVideo: 1, tradPhoto: 1, tradVideo: 1 },
+    { id: 'e8', date: '26 Feb 2027', location: 'Hyderabad', title: 'Vratham', candidPhoto: 1, candidVideo: 1, tradPhoto: 1, tradVideo: 1 }
+  ],
+  t2: {
+    heroBg: './images/template2/hero-card-bg.jpg',
+    heroSubtitle: 'Because Every Frame Has a Story to Tell',
+    greetingTitle: 'Dear',
+    welcomeText: 'We appreciate the opportunity to be a part of your special day and capture the timeless moments that will make your wedding a cherished memory.',
+    aboutTitle: 'About Us',
+    aboutDesc: 'At Timemachine & Co, we freeze fleeting moments to make your forever love story a timeless masterpiece, weaving the magic of your wedding into a tapestry of emotions, traditions, and heirlooms. Embark on your journey with us, and create a visual legacy treasured for generations to come.',
+    bannerUrl: 'https://youtu.be/OctoMQEqK9E',
+    videoUrl: 'https://youtu.be/OctoMQEqK9E',
+    gallery: [
+      './images/template2/gallery-1.jpg',
+      './images/template2/gallery-2.jpg',
+      './images/template2/gallery-3.jpg',
+      './images/template2/gallery-4.jpg'
+    ],
+    services: {
+      pictures: {
+        included: true,
+        title: 'Edited Pictures',
+        desc: 'You shall receive 1,000 fully edited images from all events, portraying your wedding story, delivered on the cloud within 60 days from payment clearance.'
+      },
+      films: {
+        included: true,
+        title: 'Cinematic Wedding Film',
+        desc: '1 cinematic HD film with the best footage from your events, edited according to our style, to be delivered on cloud within 60 days from payment clearance. You can suggest any number of changes but all at once and within a week of delivery.',
+        note: '*Changes will be accepted only once from 2nd time Rs 15,000 will be charged extra.'
+      },
+      albums: {
+        included: true,
+        title: 'Printed Albums',
+        desc: 'You shall receive 3 Printed albums from the best events each album has 40 sheets. An extra sheet will incur an additional charge of ₹600 per sheet.'
+      },
+      videos: {
+        included: true,
+        title: 'Traditional Videos',
+        desc: 'You shall receive 5 long traditional video of all events in documentary style, delivered within 75 days from payment clearance.'
+      }
+    },
+    priceSection: {
+      greeting: 'Dear Bhavya Alapati',
+      subtitle: 'Your final quote price would be',
+      advanceTitle: 'Advance Payment',
+      advanceText: '50% of the total billing value to be paid as an advance to block the dates.',
+      finalTitle: 'Final Payment',
+      finalText: 'Remaining 50% payment along with Transportation charges shall be done before/after wedding before receiving Raw footage.',
+      hdNote: "*You're required to provide us 2 units of 4TB Hard Drives to ensure the backup and safety of your data.",
+      cancelNote: 'Note : Incase of any cancellation, the advance or the payments cannot be returned.'
+    },
+    addonsSubtitle: "If you're interested in expanding your package, we also provide additional services that are not included in the standard package:",
+    addons: [
+      { id: 'led', title: 'LED Wall', price: 25000, desc: 'Digital LED Screens to showcase your Event video from multiple cameras LIVE. Equipped with a P3 display, of about 10 ft width and 8ft height.', selected: false },
+      { id: 'weblive', title: 'Web Live', price: 15000, desc: "Live telecasting of your event video footage on the web. You're required to provide a name to generate a custom link that you can share with your friends and family so that they can watch the event remotely.", selected: false },
+      { id: 'drone', title: 'Drone', price: 15000, desc: 'If you wish for a drone service for your events it would be chargeable at Rs.15,000/- per event. The drones will be used to cover decor only and are subject to government permissions.', selected: false },
+      { id: 'albums', title: 'Print Albums', price: 25000, desc: 'Premium designer album of 40 sheets portraying your wedding story and each costs', selected: false }
+    ],
+    termsSubtitle: 'Our terms of service, including cancellation policies and copyright information, are detailed below for your review.',
+    terms: [
+      {
+        title: 'Travel Expense',
+        desc: 'You shall arrange for the travel and accommodation of our shoot crew for all your events occurring in places away from hyderabad.'
+      },
+      {
+        title: 'Project Cancellation',
+        desc: 'If you cancel the project after the advance payment & reserving team schedules for you, the payments cannot be returned.'
+      },
+      {
+        title: 'Delivery Timeline',
+        desc: 'We strictly adhere to deliveries on the mentioned timeline. We do not entertain any early requests, as it will hamper timelines of other deliverables.'
+      },
+      {
+        title: 'Change of Plans -',
+        desc: 'Any change of plans or postponement of events will be accommodated with the best team available on the new dates and chargeable depending on the type of events and crew required.'
+      },
+      {
+        title: 'Shoot Permissions',
+        desc: 'Please note that all the required government permissions for any couple shoot shall be attained by the clients and the team is no way responsible for it. In case of any fines/ inconvenience to the shoot, we are not to be held responsible.'
+      },
+      {
+        title: 'Print Albums',
+        desc: 'Photos selection has to be given by the client and that is mandatory. After the selection has been given it will take 25-30 days for the team to send you the layouts and once the approval has been made from the client, then it will take a week to hand over the albums\nIf selections are not made for more than 7 months from the date of the event then each album will be charged Rs. 15,000/- extra'
+      },
+      {
+        title: 'Security for Loss',
+        desc: 'Client agrees to indemnify and hold harmless to the crew for any liability, damage or loss, related to technological failure, including data loss.'
+      },
+      {
+        title: 'Data Safety',
+        desc: 'Although we’ve never lost any event’s data in the past 12 years, in the rarest probability of any data loss, we are liable to shoot another event for free or deduct the corresponding event charges.'
+      },
+      {
+        title: 'Additional Services Quality',
+        desc: 'We don’t take responsibility for the quality of Web-live, LED walls and other services, since they are provided by 3rd party vendors. Our primary focus lies on great work with our photos & videos.'
+      },
+      {
+        title: 'Video Revisions Timeline:',
+        desc: 'Any requests for video changes must be communicated within 20-30days from the date of final output delivery.'
+      },
+      {
+        title: 'Final Payment & Editing:',
+        desc: 'Post-event editing work will begin only after the final payment has been successfully completed. This ensures a streamlined workflow and helps us maintain our quality standards.'
+      }
+    ],
+    nextSteps: {
+      title: 'Next Steps',
+      p1: 'Please take a moment to review the proposal and attached terms of service. If you have any questions or would like to discuss specific details, feel free to reach out',
+      p2: 'We eagerly anticipate the opportunity to contribute to your special day and create a visual story that will be cherished for a lifetime.',
+      signoff: 'Best regards, Timemachine & Co.',
+      phone: '+919705632982',
+      whatsapp: '+919705632982',
+      website: 'https://www.timemachineworks.com',
+      instagram: 'https://instagram.com/TimemachineandCo',
+      facebook: 'https://facebook.com',
+      pinterest: 'https://pinterest.com'
+    }
+  }
+};
+
+function getCalculatedTotalPrice() {
+  let base = 0;
+  if (typeof activeQuotation.basePrice === 'number') {
+    base = activeQuotation.basePrice;
+  } else if (typeof activeQuotation.basePrice === 'string' && activeQuotation.basePrice.trim() !== '') {
+    const parsed = parseInt(activeQuotation.basePrice.replace(/[^0-9]/g, ''), 10);
+    if (!isNaN(parsed)) base = parsed;
+  }
+
+  let addOnTotal = 0;
+  if (activeQuotation.t2 && Array.isArray(activeQuotation.t2.addons)) {
+    activeQuotation.t2.addons.forEach(add => {
+      if (add.selected) {
+        addOnTotal += Number(add.price) || 0;
+      }
+    });
+  }
+
+  return base + addOnTotal;
+}
+
+function updateClientProposalLink() {
+  const linkEl = document.getElementById('btn-view-client-proposal');
+  if (!linkEl) return;
+  const clientParam = encodeURIComponent(activeQuotation.clientName || 'Client');
+  const priceParam = encodeURIComponent(getCalculatedTotalPrice().toLocaleString('en-IN'));
+  const templateParam = encodeURIComponent(activeQuotation.selectedTemplate || 'template2');
+  const vidParam = encodeURIComponent(activeQuotation.t2?.videoUrl || activeQuotation.t2?.bannerUrl || 'https://youtu.be/OctoMQEqK9E');
+  linkEl.href = `proposal.html?template=${templateParam}&client=${clientParam}&price=${priceParam}&video=${vidParam}`;
+}
+
+function populateQuotationForm() {
+  // Client Info
+  const cName = document.getElementById('quote-client-name');
+  const cCouple = document.getElementById('quote-couple-names');
+  const cPhone = document.getElementById('quote-client-phone');
+  const cEmail = document.getElementById('quote-client-email');
+  const cPrice = document.getElementById('quote-total-price');
+  const tplSelect = document.getElementById('quote-template-select');
+
+  if (cName) cName.value = activeQuotation.clientName || '';
+  if (cCouple) cCouple.value = activeQuotation.coupleNames || '';
+  if (cPhone) cPhone.value = activeQuotation.clientPhone || activeQuotation.phone || '';
+  if (cEmail) cEmail.value = activeQuotation.clientEmail || activeQuotation.email || '';
+  if (cPrice) {
+    if (typeof activeQuotation.basePrice === 'number' && activeQuotation.basePrice > 0) {
+      cPrice.value = activeQuotation.basePrice.toLocaleString('en-IN');
+    } else if (typeof activeQuotation.basePrice === 'string' && activeQuotation.basePrice.trim() !== '' && activeQuotation.basePrice !== '25,000') {
+      cPrice.value = activeQuotation.basePrice;
+    } else {
+      cPrice.value = '';
+    }
+  }
+  if (tplSelect) tplSelect.value = activeQuotation.selectedTemplate || 'template2';
+
+  // Card 1: Hero & Greeting
+  const hSubtitle = document.getElementById('quote-t2-hero-subtitle');
+  const gTitle = document.getElementById('quote-t2-greeting-title');
+  const wText = document.getElementById('quote-t2-welcome-text');
+  const hBg = document.getElementById('quote-t2-hero-bg');
+
+  if (hSubtitle) hSubtitle.value = activeQuotation.t2?.heroSubtitle || '';
+  if (gTitle) gTitle.value = activeQuotation.t2?.greetingTitle || 'Dear';
+  if (wText) wText.value = activeQuotation.t2?.welcomeText || '';
+  if (hBg) hBg.value = activeQuotation.t2?.heroBg || '';
+
+  // Card 3: About Us
+  const abTitle = document.getElementById('quote-t2-about-title');
+  const abDesc = document.getElementById('quote-t2-about-desc');
+  const abBanner = document.getElementById('quote-t2-banner-url');
+
+  if (abTitle) abTitle.value = activeQuotation.t2?.aboutTitle || '';
+  if (abDesc) abDesc.value = activeQuotation.t2?.aboutDesc || '';
+  const currentVid = activeQuotation.t2?.videoUrl || activeQuotation.t2?.bannerUrl || 'https://youtu.be/OctoMQEqK9E';
+  if (abBanner) abBanner.value = currentVid;
+
+  const quoteVid = document.getElementById('quote-t2-video-url');
+  const quoteVidBtn = document.getElementById('btn-open-video-link');
+  if (quoteVid) quoteVid.value = currentVid;
+  if (quoteVidBtn) quoteVidBtn.href = currentVid || '#';
+
+  // Card 4: Gallery (4 Photos)
+  if (activeQuotation.t2?.gallery) {
+    for (let i = 1; i <= 4; i++) {
+      const gInput = document.getElementById(`quote-t2-gallery-${i}`);
+      const gThumb = document.getElementById(`thumb-t2-gal-${i}`);
+      const url = activeQuotation.t2.gallery[i - 1] || '';
+      if (gInput) gInput.value = url;
+      if (gThumb && url) gThumb.src = url;
+    }
+  }
+
+  // Card 5: Services Offered
+  const svcs = activeQuotation.t2?.services || {};
+  const chkPic = document.getElementById('svc-pictures-check');
+  const tPic = document.getElementById('quote-svc-pictures-title');
+  const dPic = document.getElementById('quote-svc-pictures-desc');
+  if (chkPic) chkPic.checked = svcs.pictures?.included !== false;
+  if (tPic) tPic.value = svcs.pictures?.title || 'Edited Pictures';
+  if (dPic) dPic.value = svcs.pictures?.desc || '';
+
+  const chkFilm = document.getElementById('svc-films-check');
+  const tFilm = document.getElementById('quote-svc-films-title');
+  const dFilm = document.getElementById('quote-svc-films-desc');
+  const nFilm = document.getElementById('quote-svc-films-note');
+  if (chkFilm) chkFilm.checked = svcs.films?.included !== false;
+  if (tFilm) tFilm.value = svcs.films?.title || 'Cinematic Wedding Films';
+  if (dFilm) dFilm.value = svcs.films?.desc || '';
+  if (nFilm) nFilm.value = svcs.films?.note || '';
+
+  const chkAlb = document.getElementById('svc-albums-check');
+  const tAlb = document.getElementById('quote-svc-albums-title');
+  const dAlb = document.getElementById('quote-svc-albums-desc');
+  if (chkAlb) chkAlb.checked = svcs.albums?.included !== false;
+  if (tAlb) tAlb.value = svcs.albums?.title || 'Printed Albums';
+  if (dAlb) dAlb.value = svcs.albums?.desc || '';
+
+  const chkVid = document.getElementById('svc-videos-check');
+  const tVid = document.getElementById('quote-svc-videos-title');
+  const dVid = document.getElementById('quote-svc-videos-desc');
+  if (chkVid) chkVid.checked = svcs.videos?.included !== false;
+  if (tVid) tVid.value = svcs.videos?.title || 'Traditional Videos';
+  if (dVid) dVid.value = svcs.videos?.desc || '';
+
+  // Card 6: Quote Price & Payment Timeline
+  const ps = activeQuotation.t2?.priceSection || {};
+  const pgGreet = document.getElementById('quote-t2-price-greeting');
+  const pgSub = document.getElementById('quote-t2-price-subtitle');
+  const advTitle = document.getElementById('quote-t2-advance-title');
+  const advText = document.getElementById('quote-t2-advance-text');
+  const finTitle = document.getElementById('quote-t2-final-title');
+  const finText = document.getElementById('quote-t2-final-text');
+  const hdNote = document.getElementById('quote-hd-note');
+  const cnlNote = document.getElementById('quote-t2-cancel-note');
+
+  if (pgGreet) pgGreet.value = ps.greeting || 'Dear';
+  if (pgSub) pgSub.value = ps.subtitle || '';
+  if (advTitle) advTitle.value = ps.advanceTitle || 'Advance Payment';
+  if (advText) advText.value = ps.advanceText || '';
+  if (finTitle) finTitle.value = ps.finalTitle || 'Final Payment';
+  if (finText) finText.value = ps.finalText || '';
+  if (hdNote) hdNote.value = ps.hdNote || '';
+  if (cnlNote) cnlNote.value = ps.cancelNote || '';
+
+  // Card 7: Add-Ons
+  const addSub = document.getElementById('quote-t2-addons-subtitle');
+  if (addSub) addSub.value = activeQuotation.t2?.addonsSubtitle || '';
+  const addons = activeQuotation.t2?.addons || [];
+  const ledAddon = addons.find(a => a.id === 'led');
+  const webAddon = addons.find(a => a.id === 'weblive');
+  const droneAddon = addons.find(a => a.id === 'drone');
+  const albAddon = addons.find(a => a.id === 'albums');
+
+  if (ledAddon) {
+    const chk = document.getElementById('addon-led-check');
+    const t = document.getElementById('quote-addon-led-title');
+    const p = document.getElementById('quote-addon-led-price');
+    const d = document.getElementById('quote-addon-led-desc');
+    if (chk) chk.checked = !!ledAddon.selected;
+    if (t) t.value = ledAddon.title;
+    if (p) p.value = ledAddon.price;
+    if (d) d.value = ledAddon.desc;
+  }
+  if (webAddon) {
+    const chk = document.getElementById('addon-weblive-check');
+    const t = document.getElementById('quote-addon-weblive-title');
+    const p = document.getElementById('quote-addon-weblive-price');
+    const d = document.getElementById('quote-addon-weblive-desc');
+    if (chk) chk.checked = !!webAddon.selected;
+    if (t) t.value = webAddon.title;
+    if (p) p.value = webAddon.price;
+    if (d) d.value = webAddon.desc;
+  }
+  if (droneAddon) {
+    const chk = document.getElementById('addon-drone-check');
+    const t = document.getElementById('quote-addon-drone-title');
+    const p = document.getElementById('quote-addon-drone-price');
+    const d = document.getElementById('quote-addon-drone-desc');
+    if (chk) chk.checked = !!droneAddon.selected;
+    if (t) t.value = droneAddon.title;
+    if (p) p.value = droneAddon.price;
+    if (d) d.value = droneAddon.desc;
+  }
+  if (albAddon) {
+    const chk = document.getElementById('addon-albums-check');
+    const t = document.getElementById('quote-addon-albums-title');
+    const p = document.getElementById('quote-addon-albums-price');
+    const d = document.getElementById('quote-addon-albums-desc');
+    if (chk) chk.checked = !!albAddon.selected;
+    if (t) t.value = albAddon.title;
+    if (p) p.value = albAddon.price;
+    if (d) d.value = albAddon.desc;
+  }
+
+  // Card 8: Terms Subtitle
+  const tSub = document.getElementById('quote-t2-terms-subtitle');
+  if (tSub) tSub.value = activeQuotation.t2?.termsSubtitle || '';
+
+  // Card 9: Next Steps & Contact
+  const ns = activeQuotation.t2?.nextSteps || {};
+  const nsTitle = document.getElementById('quote-t2-nextsteps-title');
+  const nsP1 = document.getElementById('quote-t2-nextsteps-p1');
+  const nsP2 = document.getElementById('quote-t2-nextsteps-p2');
+  const nsSign = document.getElementById('quote-t2-nextsteps-signoff');
+  const nsPhone = document.getElementById('quote-t2-phone');
+  const nsWa = document.getElementById('quote-t2-whatsapp');
+  const nsWeb = document.getElementById('quote-t2-website');
+  const nsInsta = document.getElementById('quote-t2-instagram');
+  const nsFb = document.getElementById('quote-t2-facebook');
+  const nsPin = document.getElementById('quote-t2-pinterest');
+
+  if (nsTitle) nsTitle.value = ns.title || 'Next Steps';
+  if (nsP1) nsP1.value = ns.p1 || '';
+  if (nsP2) nsP2.value = ns.p2 || '';
+  if (nsSign) nsSign.value = ns.signoff || '';
+  if (nsPhone) nsPhone.value = ns.phone || '';
+  if (nsWa) nsWa.value = ns.whatsapp || '';
+  if (nsWeb) nsWeb.value = ns.website || '';
+  if (nsInsta) nsInsta.value = ns.instagram || '';
+  if (nsFb) nsFb.value = ns.facebook || '';
+  if (nsPin) nsPin.value = ns.pinterest || '';
+
+  // Render Sub-lists
+  renderQuoteEventsForm();
+  renderQuoteTermsForm();
+  updateClientProposalLink();
+}
+
+function renderQuoteEventsForm() {
+  const container = document.getElementById('quote-events-list');
+  if (!container) return;
+
+  container.innerHTML = activeQuotation.events.map((evt, idx) => `
+    <div class="event-item-card" data-evt-idx="${idx}">
+      <div class="event-item-header">
+        <strong style="color: var(--color-heading); font-size: 0.95rem;">
+          Event #${idx + 1}: ${escapeHtml(evt.title || evt.name || 'Ceremony')}
+        </strong>
+        <button type="button" class="admin-btn-delete btn-delete-quote-event" data-idx="${idx}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          Remove
+        </button>
+      </div>
+
+      <div class="admin-form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="admin-form-group">
+          <label class="admin-label">Event Title / Ceremony</label>
+          <input type="text" class="admin-input evt-field-title" value="${escapeHtml(evt.title || evt.name || '')}">
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Date & Time</label>
+          <input type="text" class="admin-input evt-field-date" value="${escapeHtml(evt.date || '')}">
+        </div>
+        <div class="admin-form-group">
+          <label class="admin-label">Location / City / Venue</label>
+          <input type="text" class="admin-input evt-field-location" value="${escapeHtml(evt.location || '')}">
+        </div>
+      </div>
+
+      <div style="margin-top: 1rem; border-top: 1px dashed var(--color-border-light); padding-top: 0.85rem;">
+        <label class="admin-label" style="margin-bottom: 0.5rem; display: block;">Crew Staffing Breakdown</label>
+        <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+          <div class="crew-counter-group">
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--color-body);">Candid Photo:</span>
+            <button type="button" class="crew-btn btn-crew-dec" data-idx="${idx}" data-field="candidPhoto">-</button>
+            <span style="font-weight: 700; font-size: 0.85rem; min-width: 14px; text-align: center;">${evt.candidPhoto ?? 1}</span>
+            <button type="button" class="crew-btn btn-crew-inc" data-idx="${idx}" data-field="candidPhoto">+</button>
+          </div>
+          <div class="crew-counter-group">
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--color-body);">Candid Video:</span>
+            <button type="button" class="crew-btn btn-crew-dec" data-idx="${idx}" data-field="candidVideo">-</button>
+            <span style="font-weight: 700; font-size: 0.85rem; min-width: 14px; text-align: center;">${evt.candidVideo ?? 1}</span>
+            <button type="button" class="crew-btn btn-crew-inc" data-idx="${idx}" data-field="candidVideo">+</button>
+          </div>
+          <div class="crew-counter-group">
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--color-body);">Trad Photo:</span>
+            <button type="button" class="crew-btn btn-crew-dec" data-idx="${idx}" data-field="tradPhoto">-</button>
+            <span style="font-weight: 700; font-size: 0.85rem; min-width: 14px; text-align: center;">${evt.tradPhoto ?? 1}</span>
+            <button type="button" class="crew-btn btn-crew-inc" data-idx="${idx}" data-field="tradPhoto">+</button>
+          </div>
+          <div class="crew-counter-group">
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--color-body);">Trad Video:</span>
+            <button type="button" class="crew-btn btn-crew-dec" data-idx="${idx}" data-field="tradVideo">-</button>
+            <span style="font-weight: 700; font-size: 0.85rem; min-width: 14px; text-align: center;">${evt.tradVideo ?? 1}</span>
+            <button type="button" class="crew-btn btn-crew-inc" data-idx="${idx}" data-field="tradVideo">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Wire up event card field listeners
+  container.querySelectorAll('.event-item-card').forEach(card => {
+    const idx = parseInt(card.getAttribute('data-evt-idx'), 10);
+    const titleInp = card.querySelector('.evt-field-title');
+    const dateInp = card.querySelector('.evt-field-date');
+    const locInp = card.querySelector('.evt-field-location');
+
+    if (titleInp) {
+      titleInp.addEventListener('input', (e) => {
+        activeQuotation.events[idx].title = e.target.value;
+        activeQuotation.events[idx].name = e.target.value;
+        renderProposalPreview();
+      });
+    }
+    if (dateInp) {
+      dateInp.addEventListener('input', (e) => {
+        activeQuotation.events[idx].date = e.target.value;
+        renderProposalPreview();
+      });
+    }
+    if (locInp) {
+      locInp.addEventListener('input', (e) => {
+        activeQuotation.events[idx].location = e.target.value;
+        renderProposalPreview();
+      });
+    }
+  });
+
+  // Delete event
+  container.querySelectorAll('.btn-delete-quote-event').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const idx = parseInt(e.currentTarget.getAttribute('data-idx'), 10);
+      if (activeQuotation.events.length <= 1) {
+        alert('You must have at least 1 celebration event in the proposal.');
+        return;
+      }
+      activeQuotation.events.splice(idx, 1);
+      renderQuoteEventsForm();
+      renderProposalPreview();
+    });
+  });
+
+  // Crew Counters inc/dec
+  container.querySelectorAll('.btn-crew-dec').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const idx = parseInt(e.currentTarget.getAttribute('data-idx'), 10);
+      const field = e.currentTarget.getAttribute('data-field');
+      if (activeQuotation.events[idx] && activeQuotation.events[idx][field] > 0) {
+        activeQuotation.events[idx][field]--;
+        renderQuoteEventsForm();
+        renderProposalPreview();
+      }
+    });
+  });
+
+  container.querySelectorAll('.btn-crew-inc').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const idx = parseInt(e.currentTarget.getAttribute('data-idx'), 10);
+      const field = e.currentTarget.getAttribute('data-field');
+      if (activeQuotation.events[idx]) {
+        activeQuotation.events[idx][field] = (activeQuotation.events[idx][field] || 0) + 1;
+        renderQuoteEventsForm();
+        renderProposalPreview();
+      }
+    });
+  });
+}
+
+function renderQuoteTermsForm() {
+  const container = document.getElementById('quote-terms-list');
+  if (!container || !activeQuotation.t2?.terms) return;
+
+  container.innerHTML = activeQuotation.t2.terms.map((term, idx) => `
+    <div style="background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1.25rem; border-radius: 8px;" data-term-idx="${idx}">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
+        <strong style="color: var(--color-heading); font-size: 0.92rem;">Clause #${idx + 1}: ${escapeHtml(term.title)}</strong>
+        <button type="button" class="admin-btn-delete btn-delete-quote-term" data-idx="${idx}">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          Remove Clause
+        </button>
+      </div>
+      <div class="admin-form-group" style="margin-bottom: 0.5rem;">
+        <label class="admin-label">Clause Title</label>
+        <input type="text" class="admin-input term-field-title" value="${escapeHtml(term.title)}">
+      </div>
+      <div class="admin-form-group">
+        <label class="admin-label">Clause Description</label>
+        <textarea class="admin-textarea term-field-desc" style="min-height: 55px;">${escapeHtml(term.desc)}</textarea>
+      </div>
+    </div>
+  `).join('');
+
+  // Wire up term input listeners
+  container.querySelectorAll('[data-term-idx]').forEach(box => {
+    const idx = parseInt(box.getAttribute('data-term-idx'), 10);
+    const titleInp = box.querySelector('.term-field-title');
+    const descInp = box.querySelector('.term-field-desc');
+
+    if (titleInp) {
+      titleInp.addEventListener('input', (e) => {
+        activeQuotation.t2.terms[idx].title = e.target.value;
+        renderProposalPreview();
+      });
+    }
+    if (descInp) {
+      descInp.addEventListener('input', (e) => {
+        activeQuotation.t2.terms[idx].desc = e.target.value;
+        renderProposalPreview();
+      });
+    }
+  });
+
+  // Delete term
+  container.querySelectorAll('.btn-delete-quote-term').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const idx = parseInt(e.currentTarget.getAttribute('data-idx'), 10);
+      activeQuotation.t2.terms.splice(idx, 1);
+      renderQuoteTermsForm();
+      renderProposalPreview();
+    });
+  });
+}
+
+function getYouTubeEmbedUrl(url, autoplay = true, mute = true) {
+  if (!url) return null;
+  const str = String(url).trim();
+  const ytMatch = str.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/i);
+  if (ytMatch) {
+    const ytId = ytMatch[1];
+    const autoParam = autoplay ? '1' : '0';
+    const muteParam = mute ? '1' : '0';
+    return `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=${autoParam}&mute=${muteParam}&enablejsapi=1&playsinline=1&controls=1&loop=1&playlist=${ytId}&rel=0&modestbranding=1`;
+  }
+  return null;
+}
+
+function renderT2VideoPlayer(videoUrl, options = {}) {
+  const url = (videoUrl || '').trim();
+  if (!url) return '';
+
+  const ytEmbed = getYouTubeEmbedUrl(url, true, true);
+  let mediaInner = '';
+  if (ytEmbed) {
+    mediaInner = `
+      <iframe
+        id="t2-preview-featured-iframe"
+        src="${ytEmbed}"
+        title="Timemachine & Co. Featured Film"
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen>
+      </iframe>
+    `;
+  } else {
+    mediaInner = `
+      <video id="t2-preview-featured-video" src="${url}" autoplay muted loop playsinline controls style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"></video>
+    `;
+  }
+
+  const removeBtn = options.showRemove !== false ? `
+    <button type="button" class="t2-remove-btn t2-remove-section-btn" data-remove-type="section" data-section="video" title="Remove Video Section">✕</button>
+  ` : '';
+
+  return `
+    <div class="t2-section-wrap t2-video-wrap" data-section="video" style="position: relative; margin: 1.75rem 0 2.25rem 0;">
+      ${removeBtn}
+      <div class="t2-banner-card" style="position: relative;">
+        ${mediaInner}
+      </div>
+      <div class="t2-add-section-row">
+        <button type="button" class="t2-add-section-btn" data-after-section="video" title="Add Section">+</button>
+      </div>
+    </div>
+  `;
+}
+
+function bindVideoUnmuteControls(container) {
+  if (!container) return;
+  const videoWraps = container.querySelectorAll('.t2-video-wrap');
+  videoWraps.forEach(wrap => {
+    const overlay = wrap.querySelector('.t2-video-unmute-overlay');
+    const toggleBtn = wrap.querySelector('.t2-sound-toggle-btn');
+    const label = toggleBtn ? toggleBtn.querySelector('.t2-sound-state-label') : null;
+    const iframe = wrap.querySelector('iframe');
+    const video = wrap.querySelector('video');
+
+    let isMuted = true;
+
+    function unmuteVideo() {
+      isMuted = false;
+      if (overlay) {
+        overlay.classList.add('unmuted');
+      }
+      if (label) label.textContent = '🔊 Sound On';
+
+      // YouTube postMessage commands
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage(JSON.stringify({
+          event: 'command',
+          func: 'unMute',
+          args: []
+        }), '*');
+        iframe.contentWindow.postMessage(JSON.stringify({
+          event: 'command',
+          func: 'setVolume',
+          args: [100]
+        }), '*');
+        iframe.contentWindow.postMessage(JSON.stringify({
+          event: 'command',
+          func: 'playVideo',
+          args: []
+        }), '*');
+      }
+
+      // HTML5 video
+      if (video) {
+        video.muted = false;
+        video.volume = 1;
+        video.play().catch(() => {});
+      }
+    }
+
+    function muteVideo() {
+      isMuted = true;
+      if (overlay) {
+        overlay.classList.remove('unmuted');
+      }
+      if (label) label.textContent = '🔈 Muted';
+
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage(JSON.stringify({
+          event: 'command',
+          func: 'mute',
+          args: []
+        }), '*');
+      }
+      if (video) {
+        video.muted = true;
+      }
+    }
+
+    if (overlay) {
+      overlay.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        unmuteVideo();
+      });
+    }
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isMuted) {
+          unmuteVideo();
+        } else {
+          muteVideo();
+        }
+      });
+    }
+  });
+}
+
+function bindGalleryPhotoEditControls(container) {
+  if (!container) return;
+  const items = container.querySelectorAll('.t2-gallery-item');
+  items.forEach(item => {
+    const idx = parseInt(item.getAttribute('data-gal-idx'), 10);
+    const editBtn = item.querySelector('.t2-gallery-edit-btn');
+
+    const triggerChange = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const currentUrl = activeQuotation.t2?.gallery?.[idx] || `./images/template2/gallery-${idx + 1}.jpg`;
+      const newUrl = prompt(`Enter new image URL or path for Photo ${idx + 1}:`, currentUrl);
+      if (newUrl !== null && newUrl.trim() !== '') {
+        const trimmed = newUrl.trim();
+        if (!activeQuotation.t2) activeQuotation.t2 = {};
+        if (!activeQuotation.t2.gallery) activeQuotation.t2.gallery = [];
+        activeQuotation.t2.gallery[idx] = trimmed;
+
+        // Sync with left admin form input and thumbnail preview
+        const gInput = document.getElementById(`quote-t2-gallery-${idx + 1}`);
+        const gThumb = document.getElementById(`thumb-t2-gal-${idx + 1}`);
+        if (gInput) gInput.value = trimmed;
+        if (gThumb) gThumb.src = trimmed;
+
+        renderProposalPreview();
+        updateClientProposalLink();
+        try {
+          localStorage.setItem('studio_active_quotation', JSON.stringify(activeQuotation));
+        } catch (err) {}
+        showUndoToast(`Gallery Photo ${idx + 1} updated!`);
+      }
+    };
+
+    if (editBtn) {
+      editBtn.addEventListener('click', triggerChange);
+    }
+    item.addEventListener('click', (e) => {
+      if (!e.target.closest('.t2-remove-btn') && !item.closest('.admin-client-view-active')) {
+        triggerChange(e);
+      }
+    });
+  });
+}
+
+function renderProposalPreview() {
+  const previewContainer = document.getElementById('proposal-template-preview');
+  if (!previewContainer) return;
+
+  const wasClientView = previewContainer.classList.contains('admin-client-view-active');
+  const total = getCalculatedTotalPrice();
+  const totalPriceFormatted = total.toLocaleString('en-IN');
+  const clientName = activeQuotation.clientName || 'Bhavya Alapati';
+
+  if (activeQuotation.selectedTemplate === 'template2') {
+    previewContainer.className = wasClientView ? 'proposal-paper-template2 admin-client-view-active' : 'proposal-paper-template2';
+    const t2 = activeQuotation.t2;
+
+    const starDividerSvg = `
+      <div class="t2-star-divider">
+        <svg width="220" height="24" viewBox="0 0 220 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="0" y1="12" x2="85" y2="12" stroke="#C5A059" stroke-width="1" stroke-dasharray="2 2" />
+          <circle cx="95" cy="12" r="2.5" fill="#C5A059" />
+          <path d="M110 5L112.5 10.5L118 12L112.5 13.5L110 19L107.5 13.5L102 12L107.5 10.5L110 5Z" fill="#C5A059" />
+          <circle cx="125" cy="12" r="2.5" fill="#C5A059" />
+          <line x1="135" y1="12" x2="220" y2="12" stroke="#C5A059" stroke-width="1" stroke-dasharray="2 2" />
+        </svg>
+      </div>
+    `;
+
+    previewContainer.innerHTML = `
+      <!-- TOP HEADER BAR (Clean, no 25,000 text) -->
+      <div class="t2-top-header">
+        <span class="t2-top-header-title inpage-word-editable" contenteditable="true" data-field="t2.headerTitle" title="Click to edit header">Proposal</span>
+        <div class="t2-top-header-logo">TM &amp; CO</div>
+        <div class="t2-top-header-right">
+          <span class="t2-top-header-tag inpage-word-editable" contenteditable="true" data-field="t2.headerTag" title="Click to edit header tag">Wedding Proposal</span>
+        </div>
+      </div>
+
+      <!-- HERO COVER ARTWORK -->
+      <div class="t2-hero-card" style="background-image: url('${t2.heroBg || './images/template2/hero-card-bg.jpg'}');">
+        <div class="t2-hero-client-name inpage-word-editable" contenteditable="true" data-field="clientName" data-sync-input="quote-client-name" title="Click to edit client name like Word">${escapeHtml(clientName)}</div>
+      </div>
+
+      <!-- EDITORIAL CONTENT BODY -->
+      <div class="t2-section-body">
+
+        <!-- GREETING (Fixed to only 'Dear', deleted 'Bhavya Alapati') -->
+        <div class="t2-greeting-title inpage-word-editable" contenteditable="true" data-field="t2.greetingTitle" data-sync-input="quote-t2-greeting-title" title="Click to edit greeting">${escapeHtml(t2.greetingTitle || 'Dear')}</div>
+        <div class="t2-greeting-text inpage-word-editable" contenteditable="true" data-field="t2.welcomeText" data-sync-input="quote-t2-welcome-text" title="Click to edit welcome text">${escapeHtml(t2.welcomeText || '')}</div>
+
+        <!-- FEATURED YOUTUBE / VIDEO (Between Greeting and About Us) -->
+        ${!t2.hiddenSections?.video && (t2.videoUrl || t2.bannerUrl) ? renderT2VideoPlayer(t2.videoUrl || t2.bannerUrl, { showRemove: true }) : ''}
+
+        ${starDividerSvg}
+
+        <!-- ABOUT US -->
+        ${!t2.hiddenSections?.about ? `
+          <div class="t2-section-wrap" data-section="about">
+            <div class="t2-section-header-row" style="margin: 2rem 0 1.25rem 0;">
+              <div class="t2-section-title inpage-word-editable" contenteditable="true" data-field="t2.aboutTitle" data-sync-input="quote-t2-about-title" title="Click to edit title">${escapeHtml(t2.aboutTitle || 'About Us')}</div>
+              <button type="button" class="t2-remove-btn t2-remove-section-btn" data-remove-type="section" data-section="about" title="Remove About Us section">✕</button>
+            </div>
+            <div class="t2-about-text inpage-word-editable" contenteditable="true" data-field="t2.aboutDesc" data-sync-input="quote-t2-about-desc" title="Click to edit description">${escapeHtml(t2.aboutDesc || '')}</div>
+            <div class="t2-add-section-row">
+              <button type="button" class="t2-add-section-btn" data-after-section="about" title="Add Section">+</button>
+            </div>
+          </div>
+          ${starDividerSvg}
+        ` : ''}
+
+        <!-- PHOTO GALLERY (4 PHOTOS) -->
+        ${!t2.hiddenSections?.gallery ? `
+          <div class="t2-section-wrap" data-section="gallery">
+            <div class="t2-section-header-row" style="margin: 1.5rem 0 0.75rem 0;">
+              <div class="t2-section-title" style="font-size: 1.25rem; margin: 0;">Showcase Gallery</div>
+              <button type="button" class="t2-remove-btn t2-remove-section-btn" data-remove-type="section" data-section="gallery" title="Remove Gallery section">✕</button>
+            </div>
+            <div class="t2-gallery-grid">
+              <div class="t2-gallery-col">
+                <div class="t2-gallery-item" data-gal-idx="0">
+                  <img class="t2-gallery-img" src="${t2.gallery?.[0] || './images/template2/gallery-1.jpg'}" alt="Gallery Portrait 1">
+                  <button type="button" class="t2-gallery-edit-btn" data-gal-idx="0" title="Change Photo 1">📷 Change Photo</button>
+                </div>
+                <div class="t2-gallery-item" data-gal-idx="1">
+                  <img class="t2-gallery-img" src="${t2.gallery?.[1] || './images/template2/gallery-2.jpg'}" alt="Gallery Portrait 2">
+                  <button type="button" class="t2-gallery-edit-btn" data-gal-idx="1" title="Change Photo 2">📷 Change Photo</button>
+                </div>
+              </div>
+              <div class="t2-gallery-col">
+                <div class="t2-gallery-item" data-gal-idx="2">
+                  <img class="t2-gallery-img" src="${t2.gallery?.[2] || './images/template2/gallery-3.jpg'}" alt="Gallery Portrait 3">
+                  <button type="button" class="t2-gallery-edit-btn" data-gal-idx="2" title="Change Photo 3">📷 Change Photo</button>
+                </div>
+                <div class="t2-gallery-item" data-gal-idx="3">
+                  <img class="t2-gallery-img" src="${t2.gallery?.[3] || './images/template2/gallery-4.jpg'}" alt="Gallery Portrait 4">
+                  <button type="button" class="t2-gallery-edit-btn" data-gal-idx="3" title="Change Photo 4">📷 Change Photo</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          ${starDividerSvg}
+        ` : ''}
+
+        <!-- YOUR EVENTS (INDIVIDUAL BOX CARDS) -->
+        ${!t2.hiddenSections?.events ? `
+          <div class="t2-section-wrap" data-section="events">
+            <div class="t2-section-header-row" style="margin: 2.75rem 0 1.25rem 0;">
+              <div class="t2-section-title" style="margin: 0;">Your Events</div>
+              <button type="button" class="t2-remove-btn t2-remove-section-btn" data-remove-type="section" data-section="events" title="Remove entire Events section">✕</button>
+            </div>
+            <div class="t2-events-container">
+              ${activeQuotation.events.map(ev => `
+                <div class="t2-event-card" data-event-id="${ev.id}">
+                  <button type="button" class="t2-remove-btn" data-remove-type="event" data-event-id="${ev.id}" title="Remove this event">✕</button>
+                  <div class="t2-event-meta inpage-word-editable" contenteditable="true" data-event-id="${ev.id}" data-event-prop="meta" title="Click to edit date & location">${escapeHtml(ev.date || 'TBD Date')} | ${escapeHtml(ev.location || 'TBD Location')}</div>
+                  <div class="t2-event-heading inpage-word-editable" contenteditable="true" data-event-id="${ev.id}" data-event-prop="title" title="Click to edit event title">${escapeHtml(ev.title || ev.name || 'Ceremony')}</div>
+                  <div class="t2-crew-line inpage-word-editable" contenteditable="true" data-event-id="${ev.id}" data-event-prop="crewLine" title="Click to edit crew line">
+                    • ${ev.candidPhoto ?? 1} Candid Photographer • ${ev.candidVideo ?? 1} Candid Videographer • ${ev.tradPhoto ?? 1} Traditional Photographer • ${ev.tradVideo ?? 1} Traditional Videographer
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            <div class="t2-add-section-row">
+              <button type="button" class="t2-add-section-btn" data-after-section="events" title="Add Section">+</button>
+            </div>
+          </div>
+          ${starDividerSvg}
+        ` : ''}
+
+        <!-- SERVICES OFFERED -->
+        ${!t2.hiddenSections?.services ? `
+          <div class="t2-section-wrap" data-section="services">
+            <div class="t2-section-header-row" style="margin: 2.75rem 0 1.5rem 0;">
+              <div class="t2-section-title" style="margin: 0;">Services Offered</div>
+              <button type="button" class="t2-remove-btn t2-remove-section-btn" data-remove-type="section" data-section="services" title="Remove entire Services section">✕</button>
+            </div>
+            ${t2.services?.pictures?.included !== false ? `
+              <div class="t2-service-card" data-svc="pictures">
+                <button type="button" class="t2-remove-btn" data-remove-type="service" data-svc="pictures" title="Remove this service">✕</button>
+                <div class="t2-service-card-title inpage-word-editable" contenteditable="true" data-svc="pictures" data-svc-prop="title" data-sync-input="quote-svc-pictures-title">${escapeHtml(t2.services.pictures.title || 'Edited Pictures')}</div>
+                <div class="t2-service-card-desc inpage-word-editable" contenteditable="true" data-svc="pictures" data-svc-prop="desc" data-sync-input="quote-svc-pictures-desc">${escapeHtml(t2.services.pictures.desc || '')}</div>
+              </div>
+            ` : ''}
+            ${t2.services?.films?.included !== false ? `
+              <div class="t2-service-card" data-svc="films">
+                <button type="button" class="t2-remove-btn" data-remove-type="service" data-svc="films" title="Remove this service">✕</button>
+                <div class="t2-service-card-title inpage-word-editable" contenteditable="true" data-svc="films" data-svc-prop="title" data-sync-input="quote-svc-films-title">${escapeHtml(t2.services.films.title || 'Cinematic Wedding Films')}</div>
+                <div class="t2-service-card-desc inpage-word-editable" contenteditable="true" data-svc="films" data-svc-prop="desc" data-sync-input="quote-svc-films-desc">${escapeHtml(t2.services.films.desc || '')}</div>
+                ${t2.services.films.note ? `<div class="t2-service-card-note inpage-word-editable" contenteditable="true" data-svc="films" data-svc-prop="note" data-sync-input="quote-svc-films-note">${escapeHtml(t2.services.films.note)}</div>` : ''}
+              </div>
+            ` : ''}
+            ${t2.services?.albums?.included !== false ? `
+              <div class="t2-service-card" data-svc="albums">
+                <button type="button" class="t2-remove-btn" data-remove-type="service" data-svc="albums" title="Remove this service">✕</button>
+                <div class="t2-service-card-title inpage-word-editable" contenteditable="true" data-svc="albums" data-svc-prop="title" data-sync-input="quote-svc-albums-title">${escapeHtml(t2.services.albums.title || 'Printed Albums')}</div>
+                <div class="t2-service-card-desc inpage-word-editable" contenteditable="true" data-svc="albums" data-svc-prop="desc" data-sync-input="quote-svc-albums-desc">${escapeHtml(t2.services.albums.desc || '')}</div>
+              </div>
+            ` : ''}
+            ${t2.services?.videos?.included !== false ? `
+              <div class="t2-service-card" data-svc="videos">
+                <button type="button" class="t2-remove-btn" data-remove-type="service" data-svc="videos" title="Remove this service">✕</button>
+                <div class="t2-service-card-title inpage-word-editable" contenteditable="true" data-svc="videos" data-svc-prop="title" data-sync-input="quote-svc-videos-title">${escapeHtml(t2.services.videos.title || 'Traditional Videos')}</div>
+                <div class="t2-service-card-desc inpage-word-editable" contenteditable="true" data-svc="videos" data-svc-prop="desc" data-sync-input="quote-svc-videos-desc">${escapeHtml(t2.services.videos.desc || '')}</div>
+              </div>
+            ` : ''}
+            <div class="t2-add-section-row">
+              <button type="button" class="t2-add-section-btn" data-after-section="services" title="Add Section">+</button>
+            </div>
+          </div>
+          ${starDividerSvg}
+        ` : ''}
+
+        <!-- QUOTE CALLOUT BOX -->
+        ${!t2.hiddenSections?.quote ? `
+          <div class="t2-section-wrap" data-section="quote" style="background: #F7EFE0; border-radius: 14px; padding: 2.5rem 2rem; text-align: center; margin: 1.5rem 0; position: relative;">
+            <button type="button" class="t2-remove-btn" data-remove-type="section" data-section="quote" title="Remove Quote Callout">✕</button>
+            <div class="inpage-word-editable" contenteditable="true" data-field="t2.priceSection.greeting" data-sync-input="quote-t2-price-greeting" style="font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: #1A1816; margin-bottom: 0.35rem;" title="Click to edit greeting">
+              ${escapeHtml(t2.priceSection?.greeting || 'Dear')}
+            </div>
+            <div class="inpage-word-editable" contenteditable="true" data-field="t2.priceSection.subtitle" data-sync-input="quote-t2-price-subtitle" style="font-family: var(--font-paragraph); font-size: 1.05rem; color: #55524E; margin-bottom: 0.75rem;" title="Click to edit subtitle">
+              ${escapeHtml(t2.priceSection?.subtitle || 'Your final quote price would be')}
+            </div>
+            <div id="t2-callout-price" class="inpage-word-editable" contenteditable="true" data-field="basePrice" data-sync-input="quote-total-price" style="font-family: 'Playfair Display', serif; font-size: 3.2rem; font-weight: 700; color: #1A1816; letter-spacing: -0.01em;" title="Click to edit base price directly">
+              ₹ ${total > 0 ? totalPriceFormatted : '0'}
+            </div>
+            <div class="t2-add-section-row">
+              <button type="button" class="t2-add-section-btn" data-after-section="quote" title="Add Section">+</button>
+            </div>
+          </div>
+          ${starDividerSvg}
+        ` : ''}
+
+        <!-- PAYMENT TIMELINE -->
+        ${!t2.hiddenSections?.timeline ? `
+          <div class="t2-section-wrap" data-section="timeline">
+            <div class="t2-section-header-row" style="margin-bottom: 1.5rem;">
+              <div class="t2-section-title" style="margin: 0;">Payment Timeline</div>
+              <button type="button" class="t2-remove-btn t2-remove-section-btn" data-remove-type="section" data-section="timeline" title="Remove Payment Timeline section">✕</button>
+            </div>
+            ${!t2.hiddenSections?.advance ? `
+              <div class="t2-term-card t2-term-card-beige">
+                <button type="button" class="t2-remove-btn" data-remove-type="term-card" data-term-id="advance" title="Remove advance payment card">✕</button>
+                <div class="t2-term-title inpage-word-editable" contenteditable="true" data-field="t2.priceSection.advanceTitle" data-sync-input="quote-t2-advance-title">${escapeHtml(t2.priceSection?.advanceTitle || 'Advance Payment')}</div>
+                <div class="t2-term-desc inpage-word-editable" contenteditable="true" data-field="t2.priceSection.advanceText" data-sync-input="quote-t2-advance-text">${escapeHtml(t2.priceSection?.advanceText || '')}</div>
+              </div>
+            ` : ''}
+            ${!t2.hiddenSections?.final ? `
+              <div class="t2-term-card t2-term-card-cream" style="margin-top: 1rem;">
+                <button type="button" class="t2-remove-btn" data-remove-type="term-card" data-term-id="final" title="Remove final payment card">✕</button>
+                <div class="t2-term-title inpage-word-editable" contenteditable="true" data-field="t2.priceSection.finalTitle" data-sync-input="quote-t2-final-title">${escapeHtml(t2.priceSection?.finalTitle || 'Final Payment')}</div>
+                <div class="t2-term-desc inpage-word-editable" contenteditable="true" data-field="t2.priceSection.finalText" data-sync-input="quote-t2-final-text">${escapeHtml(t2.priceSection?.finalText || '')}</div>
+              </div>
+            ` : ''}
+            <div class="inpage-word-editable" contenteditable="true" data-field="t2.priceSection.hdNote" data-sync-input="quote-hd-note" style="font-size: 0.85rem; color: #55524E; margin-top: 1.25rem; font-style: italic; line-height: 1.6;">
+              ${escapeHtml(t2.priceSection?.hdNote || '')}
+            </div>
+            <div class="inpage-word-editable" contenteditable="true" data-field="t2.priceSection.cancelNote" data-sync-input="quote-t2-cancel-note" style="font-size: 0.88rem; color: #8C6D37; margin-top: 0.6rem; font-weight: 600;">
+              ${escapeHtml(t2.priceSection?.cancelNote || '')}
+            </div>
+            <div class="t2-add-section-row">
+              <button type="button" class="t2-add-section-btn" data-after-section="timeline" title="Add Section">+</button>
+            </div>
+          </div>
+          ${starDividerSvg}
+        ` : ''}
+
+        <!-- ADDITIONAL SERVICES -->
+        ${!t2.hiddenSections?.addons ? `
+          <div class="t2-section-wrap" data-section="addons">
+            <div class="t2-section-header-row" style="margin-bottom: 0.4rem;">
+              <div class="t2-section-title" style="margin: 0;">Additional Services</div>
+              <button type="button" class="t2-remove-btn t2-remove-section-btn" data-remove-type="section" data-section="addons" title="Remove Additional Services section">✕</button>
+            </div>
+            <div class="t2-section-subtitle">${escapeHtml(t2.addonsSubtitle || '')}</div>
+            <div class="t2-addons-grid" style="display: flex; flex-direction: column; gap: 1.25rem; margin-top: 1.5rem;">
+              ${(t2.addons || []).filter(add => !add.hidden).map(add => `
+                <div class="t2-addon-card ${add.selected ? 'selected' : ''}" data-addon-id="${add.id}">
+                  <button type="button" class="t2-remove-btn" data-remove-type="addon" data-addon-id="${add.id}" title="Remove this add-on">✕</button>
+                  <div class="t2-addon-header">
+                    <span class="t2-addon-title inpage-word-editable" contenteditable="true" data-addon-id="${add.id}" data-addon-prop="title">${escapeHtml(add.title)}</span>
+                  </div>
+                  <div class="t2-addon-desc inpage-word-editable" contenteditable="true" data-addon-id="${add.id}" data-addon-prop="desc">${escapeHtml(add.desc)}</div>
+                  <div class="t2-addon-footer">
+                    <span class="t2-addon-price inpage-word-editable" contenteditable="true" data-addon-id="${add.id}" data-addon-prop="price">₹ ${Number(add.price).toLocaleString('en-IN')}</span>
+                    <button type="button" class="t2-addon-btn ${add.selected ? 'active' : ''}" data-addon-id="${add.id}">
+                      ${add.selected ? 'Selected ✓' : 'Select'}
+                    </button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            <div class="t2-add-section-row">
+              <button type="button" class="t2-add-section-btn" data-after-section="addons" title="Add Section">+</button>
+            </div>
+          </div>
+          ${starDividerSvg}
+        ` : ''}
+
+        <!-- TERMS OF SERVICE (11 CLAUSES) -->
+        ${!t2.hiddenSections?.terms ? `
+          <div class="t2-section-wrap" data-section="terms">
+            <div class="t2-section-header-row" style="margin-bottom: 0.4rem;">
+              <div class="t2-section-title" style="margin: 0;">Terms of Service</div>
+              <button type="button" class="t2-remove-btn t2-remove-section-btn" data-remove-type="section" data-section="terms" title="Remove Terms of Service section">✕</button>
+            </div>
+            <div class="t2-section-subtitle">${escapeHtml(t2.termsSubtitle || '')}</div>
+            <div style="margin-top: 1.5rem;">
+              ${(t2.terms || []).map((term, tIdx) => `
+                <div class="t2-term-card ${tIdx % 2 === 0 ? 't2-term-card-beige' : 't2-term-card-cream'}" data-term-idx="${tIdx}">
+                  <button type="button" class="t2-remove-btn" data-remove-type="term" data-term-idx="${tIdx}" title="Remove this clause">✕</button>
+                  <div class="t2-term-title inpage-word-editable" contenteditable="true" data-term-idx="${tIdx}" data-term-prop="title">${escapeHtml(term.title)}</div>
+                  <div class="t2-term-desc inpage-word-editable" contenteditable="true" data-term-idx="${tIdx}" data-term-prop="desc">${escapeHtml(term.desc)}</div>
+                </div>
+              `).join('')}
+            </div>
+            <div class="t2-add-section-row">
+              <button type="button" class="t2-add-section-btn" data-after-section="terms" title="Add Section">+</button>
+            </div>
+          </div>
+          ${starDividerSvg}
+        ` : ''}
+
+        <!-- CUSTOM ADDED SECTIONS -->
+        ${(activeQuotation.t2?.customSections || []).map((cSec) => `
+          <div class="t2-section-wrap t2-custom-section" data-section="custom-${cSec.id}">
+            <div class="t2-section-header-row" style="margin: 2rem 0 1.25rem 0;">
+              <div class="t2-section-title inpage-word-editable" contenteditable="true" data-custom-id="${cSec.id}" data-custom-field="title">${escapeHtml(cSec.title || 'Special Highlights')}</div>
+              <button type="button" class="t2-remove-btn t2-remove-section-btn" data-remove-type="custom-section" data-custom-id="${cSec.id}" title="Remove Section">✕</button>
+            </div>
+            <div class="t2-about-text inpage-word-editable" contenteditable="true" data-custom-id="${cSec.id}" data-custom-field="desc" style="padding: 1.25rem; background: #FAF7F2; border-radius: 12px; border: 1px solid rgba(197, 160, 89, 0.35);">
+              ${escapeHtml(cSec.desc || 'Write your section details here...')}
+            </div>
+            <div class="t2-add-section-row">
+              <button type="button" class="t2-add-section-btn" data-after-section="custom-${cSec.id}" title="Add Section">+</button>
+            </div>
+          </div>
+          ${starDividerSvg}
+        `).join('')}
+
+        <!-- NEXT STEPS -->
+        ${!t2.hiddenSections?.nextsteps ? `
+          <div class="t2-section-wrap" data-section="nextsteps">
+            <div class="t2-section-header-row" style="margin-bottom: 1.25rem;">
+              <div class="t2-nextsteps-title inpage-word-editable" contenteditable="true" data-field="t2.nextSteps.title" data-sync-input="quote-t2-nextsteps-title" style="margin: 0;">${escapeHtml(t2.nextSteps?.title || 'Next Steps')}</div>
+              <button type="button" class="t2-remove-btn t2-remove-section-btn" data-remove-type="section" data-section="nextsteps" title="Remove Next Steps section">✕</button>
+            </div>
+            <div class="t2-nextsteps-desc inpage-word-editable" contenteditable="true" data-field="t2.nextSteps.p1" data-sync-input="quote-t2-nextsteps-p1">${escapeHtml(t2.nextSteps?.p1 || '')}</div>
+            <div class="t2-nextsteps-desc inpage-word-editable" contenteditable="true" data-field="t2.nextSteps.p2" data-sync-input="quote-t2-nextsteps-p2">${escapeHtml(t2.nextSteps?.p2 || '')}</div>
+            <div class="inpage-word-editable" contenteditable="true" data-field="t2.nextSteps.signoff" data-sync-input="quote-t2-signoff" style="font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: #8C6D37; margin: 1.5rem 0 1.25rem 0;">
+              ${escapeHtml(t2.nextSteps?.signoff || 'Best regards, Timemachine & Co.')}
+            </div>
+            <div class="t2-contact-icons">
+              <a href="tel:${t2.nextSteps?.phone || '+919705632982'}" class="t2-contact-circle" title="Call Us" style="display: flex; align-items: center; justify-content: center; text-decoration: none; color: #1A1816;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              </a>
+              <a href="https://wa.me/${(t2.nextSteps?.whatsapp || '+919705632982').replace(/[^0-9]/g, '')}" target="_blank" class="t2-contact-circle" title="WhatsApp" style="display: flex; align-items: center; justify-content: center; text-decoration: none; color: #1A1816;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              </a>
+            </div>
+            <div class="t2-add-section-row">
+              <button type="button" class="t2-add-section-btn" data-after-section="nextsteps" title="Add Section">+</button>
+            </div>
+          </div>
+          ${starDividerSvg}
+        ` : ''}
+
+        ${Object.keys(t2.hiddenSections || {}).filter(k => t2.hiddenSections[k]).length > 0 ? `
+          <div style="background: rgba(197, 160, 89, 0.15); border: 1px dashed #C5A059; border-radius: 10px; padding: 0.9rem 1.25rem; margin: 1.5rem 0; display: flex; align-items: center; justify-content: space-between; font-size: 0.88rem; color: #8C6D37;">
+            <span>${Object.keys(t2.hiddenSections).filter(k => t2.hiddenSections[k]).length} section(s) currently hidden</span>
+            <button type="button" id="t2-restore-all-sections-btn" style="background: #1A1816; color: #FAF7F2; border: none; border-radius: 999px; padding: 0.4rem 1rem; font-size: 0.8rem; font-weight: 600; cursor: pointer;">Restore All Sections</button>
+          </div>
+        ` : ''}
+
+        ${starDividerSvg}
+
+        <!-- FOOTER BRANDING -->
+        <div style="text-align: center; padding: 2rem 0 1rem 0;">
+          <div style="display: inline-block; border: 1.5px solid #C5A059; padding: 0.35rem 0.9rem; font-family: var(--font-heading); font-size: 0.85rem; letter-spacing: 0.18em; color: #C5A059; font-weight: 700; margin-bottom: 1.25rem;">
+            TM &amp; CO
+          </div>
+          <div>
+            <a href="${t2.nextSteps?.website || 'https://www.timemachineworks.com'}" target="_blank" class="inpage-word-editable" contenteditable="true" data-field="t2.nextSteps.website" data-sync-input="quote-t2-website" style="font-family: var(--font-paragraph); font-size: 0.95rem; color: #1A1816; font-weight: 600; text-decoration: none;">
+              ${(t2.nextSteps?.website || 'https://www.timemachineworks.com').replace(/^https?:\/\//, '')}
+            </a>
+          </div>
+          <div class="inpage-word-editable" contenteditable="true" data-field="t2.nextSteps.phone" data-sync-input="quote-t2-phone" style="font-size: 0.85rem; color: #55524E; margin: 0.4rem 0 1.25rem 0;">
+            ${escapeHtml(t2.nextSteps?.phone || '+91 97056 32982')}
+          </div>
+          <div style="display: flex; justify-content: center; gap: 1.25rem; align-items: center;">
+            <a href="${t2.nextSteps?.instagram || 'https://instagram.com/TimemachineandCo'}" target="_blank" style="color: #1A1816; text-decoration: none;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
+            <a href="${t2.nextSteps?.facebook || 'https://facebook.com'}" target="_blank" style="color: #1A1816; text-decoration: none;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+            </a>
+            <a href="${t2.nextSteps?.pinterest || 'https://pinterest.com'}" target="_blank" style="color: #1A1816; text-decoration: none;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 12c.5 1.5 1.5 2 2 2s1.5-.5 2-2c.5-1.5 0-3-1-3s-2.5 1-3 3z"></path></svg>
+            </a>
+          </div>
+          <div style="margin-top: 1.5rem; font-size: 0.75rem; color: #8C867D; letter-spacing: 0.05em;">
+            © 2026 Timemachine &amp; Co. All Rights Reserved.
+          </div>
+        </div>
+
+      </div>
+    `;
+
+    // Attach click listeners to Add-On Select buttons
+    previewContainer.querySelectorAll('.t2-addon-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const addonId = e.currentTarget.getAttribute('data-addon-id');
+        const addon = activeQuotation.t2.addons.find(a => a.id === addonId);
+        if (addon) {
+          addon.selected = !addon.selected;
+
+          // Sync checkbox in Card 7
+          const chkMap = {
+            'led': 'addon-led-check',
+            'weblive': 'addon-weblive-check',
+            'drone': 'addon-drone-check',
+            'albums': 'addon-albums-check'
+          };
+          const formChk = document.getElementById(chkMap[addonId]);
+          if (formChk) formChk.checked = addon.selected;
+
+          // Re-render preview to update totals and button states
+          renderProposalPreview();
+          updateClientProposalLink();
+        }
+      });
+    });
+
+    // Initialize Word-style In-Page Live Editing on all elements
+    initInPageWordEditing(previewContainer);
+
+    // Bind X remove buttons across all cards and sections
+    bindProposalRemoveButtons(previewContainer);
+
+    // Bind Video Unmute controls
+    bindVideoUnmuteControls(previewContainer);
+
+    // Bind Gallery Photo Edit controls
+    bindGalleryPhotoEditControls(previewContainer);
+
+    const restoreBtn = previewContainer.querySelector('#t2-restore-all-sections-btn');
+    if (restoreBtn) {
+      restoreBtn.addEventListener('click', () => {
+        activeQuotation.t2.hiddenSections = {};
+        (activeQuotation.t2.addons || []).forEach(a => a.hidden = false);
+        renderProposalPreview();
+        showUndoToast('All hidden sections restored');
+      });
+    }
+
+    // Bind Add Section buttons (+)
+    bindAdminAddSectionControls(previewContainer);
+
+    if (wasClientView) {
+      previewContainer.querySelectorAll('.inpage-word-editable').forEach(el => el.setAttribute('contenteditable', 'false'));
+    }
+
+  } else {
+    // Template 1: Fine Art Warm Cream
+    previewContainer.className = 'proposal-paper';
+    previewContainer.innerHTML = `
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <span class="proposal-header-logo-badge">Timemachine &amp; Co</span>
+        <h2 style="font-family: var(--font-heading); font-size: 2.2rem; color: #1A1816; margin: 0.75rem 0 0.25rem 0;">Fine Art Wedding Proposal</h2>
+        <p style="font-size: 0.95rem; color: var(--color-body-muted); margin: 0;">Prepared with care for <strong style="color: #1A1816;">${escapeHtml(clientName)}</strong></p>
+      </div>
+
+      <div class="proposal-divider-star">✦ ✦ ✦</div>
+
+      <div class="proposal-section-page">
+        <h3 style="font-family: var(--font-heading); font-size: 1.45rem; color: #1A1816; margin-bottom: 1.25rem;">Celebration Schedule</h3>
+        <div class="proposal-card-grid">
+          ${activeQuotation.events.map(ev => `
+            <div class="proposal-event-card">
+              <h4 class="proposal-event-title">${escapeHtml(ev.title || ev.name || 'Ceremony')}</h4>
+              <div class="proposal-event-meta">${escapeHtml(ev.date || 'TBD')} • ${escapeHtml(ev.location || 'Location TBD')}</div>
+              <div style="font-size: 0.8rem; color: var(--color-body); line-height: 1.5;">
+                • ${ev.candidPhoto ?? 1} Candid Photo<br>
+                • ${ev.candidVideo ?? 1} Candid Video<br>
+                • ${ev.tradPhoto ?? 1} Trad Photo<br>
+                • ${ev.tradVideo ?? 1} Trad Video
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="proposal-price-box">
+        <div style="font-size: 0.82rem; font-family: var(--font-ui); letter-spacing: 0.15em; text-transform: uppercase; color: #C5A059; font-weight: 700;">Total Investment</div>
+        <div class="proposal-price-val">₹ ${totalPriceFormatted}</div>
+        <div style="font-size: 0.85rem; color: var(--color-body-muted);">Inclusive of all celebration coverage, editing, color grading &amp; deliverables</div>
+      </div>
+    `;
+  }
+
+  updateClientProposalLink();
+}
+
+function bindQuotationEvents() {
+  // Template Select
+  const tplSelect = document.getElementById('quote-template-select');
+  if (tplSelect) {
+    tplSelect.addEventListener('change', (e) => {
+      activeQuotation.selectedTemplate = e.target.value;
+      renderProposalPreview();
+    });
+  }
+
+  // Client Info
+  const cName = document.getElementById('quote-client-name');
+  const cCouple = document.getElementById('quote-couple-names');
+  const cPhone = document.getElementById('quote-client-phone');
+  const cEmail = document.getElementById('quote-client-email');
+  const cPrice = document.getElementById('quote-total-price');
+
+  if (cName) {
+    cName.addEventListener('input', (e) => {
+      activeQuotation.clientName = e.target.value;
+      // Note: Greeting is fixed to 'Dear', do not auto-append client name!
+      const heroClient = document.querySelector('.t2-hero-client-name');
+      if (heroClient) heroClient.innerText = e.target.value;
+      updateClientProposalLink();
+    });
+  }
+
+  if (cCouple) {
+    cCouple.addEventListener('input', (e) => {
+      activeQuotation.coupleNames = e.target.value;
+    });
+  }
+
+  if (cPhone) {
+    cPhone.addEventListener('input', (e) => {
+      activeQuotation.clientPhone = e.target.value;
+      activeQuotation.phone = e.target.value;
+    });
+  }
+
+  if (cEmail) {
+    cEmail.addEventListener('input', (e) => {
+      activeQuotation.clientEmail = e.target.value;
+      activeQuotation.email = e.target.value;
+    });
+  }
+
+  if (cPrice) {
+    cPrice.addEventListener('input', (e) => {
+      activeQuotation.basePrice = e.target.value;
+      renderProposalPreview();
+    });
+  }
+
+  // Card 1: Hero & Greeting
+  const hSubtitle = document.getElementById('quote-t2-hero-subtitle');
+  const gTitle = document.getElementById('quote-t2-greeting-title');
+  const wText = document.getElementById('quote-t2-welcome-text');
+  const hBg = document.getElementById('quote-t2-hero-bg');
+
+  if (hSubtitle) {
+    hSubtitle.addEventListener('input', (e) => {
+      if (activeQuotation.t2) activeQuotation.t2.heroSubtitle = e.target.value;
+      renderProposalPreview();
+    });
+  }
+  if (gTitle) {
+    gTitle.addEventListener('input', (e) => {
+      if (activeQuotation.t2) activeQuotation.t2.greetingTitle = e.target.value;
+      renderProposalPreview();
+    });
+  }
+  if (wText) {
+    wText.addEventListener('input', (e) => {
+      if (activeQuotation.t2) activeQuotation.t2.welcomeText = e.target.value;
+      renderProposalPreview();
+    });
+  }
+  if (hBg) {
+    hBg.addEventListener('input', (e) => {
+      if (activeQuotation.t2) activeQuotation.t2.heroBg = e.target.value;
+      renderProposalPreview();
+    });
+  }
+
+  // Card 2: Add Event
+  const btnAddEvt = document.getElementById('btn-add-quote-event');
+  if (btnAddEvt) {
+    btnAddEvt.addEventListener('click', () => {
+      activeQuotation.events.push({
+        id: 'evt-' + Date.now(),
+        date: '28 Feb 2027',
+        location: 'Hyderabad',
+        title: 'New Ceremony',
+        candidPhoto: 1,
+        candidVideo: 1,
+        tradPhoto: 1,
+        tradVideo: 1
+      });
+      renderQuoteEventsForm();
+      renderProposalPreview();
+      showToast('New event ceremony added to schedule!');
+    });
+  }
+
+  // Card 3: About Us & Video Link
+  const abTitle = document.getElementById('quote-t2-about-title');
+  const abDesc = document.getElementById('quote-t2-about-desc');
+  const abBanner = document.getElementById('quote-t2-banner-url');
+  const quoteVid = document.getElementById('quote-t2-video-url');
+  const quoteVidBtn = document.getElementById('btn-open-video-link');
+
+  if (quoteVid) {
+    quoteVid.addEventListener('input', (e) => {
+      const val = e.target.value.trim();
+      if (activeQuotation.t2) {
+        activeQuotation.t2.videoUrl = val;
+        activeQuotation.t2.bannerUrl = val;
+        if (activeQuotation.t2.hiddenSections) {
+          delete activeQuotation.t2.hiddenSections.video;
+        }
+      }
+      if (abBanner && abBanner.value !== val) abBanner.value = val;
+      if (quoteVidBtn) quoteVidBtn.href = val || '#';
+      renderProposalPreview();
+      updateClientProposalLink();
+      saveQuotationDraft();
+    });
+  }
+
+  if (abTitle) {
+    abTitle.addEventListener('input', (e) => {
+      if (activeQuotation.t2) activeQuotation.t2.aboutTitle = e.target.value;
+      renderProposalPreview();
+    });
+  }
+  if (abDesc) {
+    abDesc.addEventListener('input', (e) => {
+      if (activeQuotation.t2) activeQuotation.t2.aboutDesc = e.target.value;
+      renderProposalPreview();
+    });
+  }
+  if (abBanner) {
+    abBanner.addEventListener('input', (e) => {
+      const val = e.target.value.trim();
+      if (activeQuotation.t2) {
+        activeQuotation.t2.bannerUrl = val;
+        activeQuotation.t2.videoUrl = val;
+        if (activeQuotation.t2.hiddenSections) {
+          delete activeQuotation.t2.hiddenSections.video;
+        }
+      }
+      if (quoteVid && quoteVid.value !== val) quoteVid.value = val;
+      if (quoteVidBtn) quoteVidBtn.href = val || '#';
+      renderProposalPreview();
+      updateClientProposalLink();
+      saveQuotationDraft();
+    });
+  }
+
+  // Card 4: Gallery (4 Photos)
+  for (let i = 1; i <= 4; i++) {
+    const gInput = document.getElementById(`quote-t2-gallery-${i}`);
+    const gThumb = document.getElementById(`thumb-t2-gal-${i}`);
+    if (gInput) {
+      gInput.addEventListener('input', (e) => {
+        const val = e.target.value.trim();
+        if (activeQuotation.t2) {
+          if (!activeQuotation.t2.gallery) activeQuotation.t2.gallery = [];
+          activeQuotation.t2.gallery[i - 1] = val;
+        }
+        if (gThumb && val) gThumb.src = val;
+        renderProposalPreview();
+      });
+    }
+  }
+
+  // Card 5: Services Offered
+  const chkPic = document.getElementById('svc-pictures-check');
+  const tPic = document.getElementById('quote-svc-pictures-title');
+  const dPic = document.getElementById('quote-svc-pictures-desc');
+  if (chkPic) {
+    chkPic.addEventListener('change', (e) => {
+      if (activeQuotation.t2?.services?.pictures) activeQuotation.t2.services.pictures.included = e.target.checked;
+      renderProposalPreview();
+    });
+  }
+  if (tPic) {
+    tPic.addEventListener('input', (e) => {
+      if (activeQuotation.t2?.services?.pictures) activeQuotation.t2.services.pictures.title = e.target.value;
+      renderProposalPreview();
+    });
+  }
+  if (dPic) {
+    dPic.addEventListener('input', (e) => {
+      if (activeQuotation.t2?.services?.pictures) activeQuotation.t2.services.pictures.desc = e.target.value;
+      renderProposalPreview();
+    });
+  }
+
+  const chkFilm = document.getElementById('svc-films-check');
+  const tFilm = document.getElementById('quote-svc-films-title');
+  const dFilm = document.getElementById('quote-svc-films-desc');
+  const nFilm = document.getElementById('quote-svc-films-note');
+  if (chkFilm) {
+    chkFilm.addEventListener('change', (e) => {
+      if (activeQuotation.t2?.services?.films) activeQuotation.t2.services.films.included = e.target.checked;
+      renderProposalPreview();
+    });
+  }
+  if (tFilm) {
+    tFilm.addEventListener('input', (e) => {
+      if (activeQuotation.t2?.services?.films) activeQuotation.t2.services.films.title = e.target.value;
+      renderProposalPreview();
+    });
+  }
+  if (dFilm) {
+    dFilm.addEventListener('input', (e) => {
+      if (activeQuotation.t2?.services?.films) activeQuotation.t2.services.films.desc = e.target.value;
+      renderProposalPreview();
+    });
+  }
+  if (nFilm) {
+    nFilm.addEventListener('input', (e) => {
+      if (activeQuotation.t2?.services?.films) activeQuotation.t2.services.films.note = e.target.value;
+      renderProposalPreview();
+    });
+  }
+
+  const chkAlb = document.getElementById('svc-albums-check');
+  const tAlb = document.getElementById('quote-svc-albums-title');
+  const dAlb = document.getElementById('quote-svc-albums-desc');
+  if (chkAlb) {
+    chkAlb.addEventListener('change', (e) => {
+      if (activeQuotation.t2?.services?.albums) activeQuotation.t2.services.albums.included = e.target.checked;
+      renderProposalPreview();
+    });
+  }
+  if (tAlb) {
+    tAlb.addEventListener('input', (e) => {
+      if (activeQuotation.t2?.services?.albums) activeQuotation.t2.services.albums.title = e.target.value;
+      renderProposalPreview();
+    });
+  }
+  if (dAlb) {
+    dAlb.addEventListener('input', (e) => {
+      if (activeQuotation.t2?.services?.albums) activeQuotation.t2.services.albums.desc = e.target.value;
+      renderProposalPreview();
+    });
+  }
+
+  const chkVid = document.getElementById('svc-videos-check');
+  const tVid = document.getElementById('quote-svc-videos-title');
+  const dVid = document.getElementById('quote-svc-videos-desc');
+  if (chkVid) {
+    chkVid.addEventListener('change', (e) => {
+      if (activeQuotation.t2?.services?.videos) activeQuotation.t2.services.videos.included = e.target.checked;
+      renderProposalPreview();
+    });
+  }
+  if (tVid) {
+    tVid.addEventListener('input', (e) => {
+      if (activeQuotation.t2?.services?.videos) activeQuotation.t2.services.videos.title = e.target.value;
+      renderProposalPreview();
+    });
+  }
+  if (dVid) {
+    dVid.addEventListener('input', (e) => {
+      if (activeQuotation.t2?.services?.videos) activeQuotation.t2.services.videos.desc = e.target.value;
+      renderProposalPreview();
+    });
+  }
+
+  // Card 6: Price Section
+  const pgGreet = document.getElementById('quote-t2-price-greeting');
+  const pgSub = document.getElementById('quote-t2-price-subtitle');
+  const advTitle = document.getElementById('quote-t2-advance-title');
+  const advText = document.getElementById('quote-t2-advance-text');
+  const finTitle = document.getElementById('quote-t2-final-title');
+  const finText = document.getElementById('quote-t2-final-text');
+  const hdNote = document.getElementById('quote-hd-note');
+  const cnlNote = document.getElementById('quote-t2-cancel-note');
+
+  if (pgGreet) pgGreet.addEventListener('input', (e) => { if (activeQuotation.t2?.priceSection) activeQuotation.t2.priceSection.greeting = e.target.value; renderProposalPreview(); });
+  if (pgSub) pgSub.addEventListener('input', (e) => { if (activeQuotation.t2?.priceSection) activeQuotation.t2.priceSection.subtitle = e.target.value; renderProposalPreview(); });
+  if (advTitle) advTitle.addEventListener('input', (e) => { if (activeQuotation.t2?.priceSection) activeQuotation.t2.priceSection.advanceTitle = e.target.value; renderProposalPreview(); });
+  if (advText) advText.addEventListener('input', (e) => { if (activeQuotation.t2?.priceSection) activeQuotation.t2.priceSection.advanceText = e.target.value; renderProposalPreview(); });
+  if (finTitle) finTitle.addEventListener('input', (e) => { if (activeQuotation.t2?.priceSection) activeQuotation.t2.priceSection.finalTitle = e.target.value; renderProposalPreview(); });
+  if (finText) finText.addEventListener('input', (e) => { if (activeQuotation.t2?.priceSection) activeQuotation.t2.priceSection.finalText = e.target.value; renderProposalPreview(); });
+  if (hdNote) hdNote.addEventListener('input', (e) => { if (activeQuotation.t2?.priceSection) activeQuotation.t2.priceSection.hdNote = e.target.value; renderProposalPreview(); });
+  if (cnlNote) cnlNote.addEventListener('input', (e) => { if (activeQuotation.t2?.priceSection) activeQuotation.t2.priceSection.cancelNote = e.target.value; renderProposalPreview(); });
+
+  // Card 7: Add-Ons
+  const addSub = document.getElementById('quote-t2-addons-subtitle');
+  if (addSub) addSub.addEventListener('input', (e) => { if (activeQuotation.t2) activeQuotation.t2.addonsSubtitle = e.target.value; renderProposalPreview(); });
+
+  const setupAddonBinding = (id, chkId, tId, pId, dId) => {
+    const chk = document.getElementById(chkId);
+    const t = document.getElementById(tId);
+    const p = document.getElementById(pId);
+    const d = document.getElementById(dId);
+    const addon = activeQuotation.t2?.addons?.find(a => a.id === id);
+    if (!addon) return;
+
+    if (chk) {
+      chk.addEventListener('change', (e) => {
+        addon.selected = e.target.checked;
+        renderProposalPreview();
+      });
+    }
+    if (t) {
+      t.addEventListener('input', (e) => {
+        addon.title = e.target.value;
+        renderProposalPreview();
+      });
+    }
+    if (p) {
+      p.addEventListener('input', (e) => {
+        addon.price = parseInt(e.target.value, 10) || 0;
+        renderProposalPreview();
+      });
+    }
+    if (d) {
+      d.addEventListener('input', (e) => {
+        addon.desc = e.target.value;
+        renderProposalPreview();
+      });
+    }
+  };
+
+  setupAddonBinding('led', 'addon-led-check', 'quote-addon-led-title', 'quote-addon-led-price', 'quote-addon-led-desc');
+  setupAddonBinding('weblive', 'addon-weblive-check', 'quote-addon-weblive-title', 'quote-addon-weblive-price', 'quote-addon-weblive-desc');
+  setupAddonBinding('drone', 'addon-drone-check', 'quote-addon-drone-title', 'quote-addon-drone-price', 'quote-addon-drone-desc');
+  setupAddonBinding('albums', 'addon-albums-check', 'quote-addon-albums-title', 'quote-addon-albums-price', 'quote-addon-albums-desc');
+
+  // Card 8: Terms Subtitle & Add Term
+  const tSub = document.getElementById('quote-t2-terms-subtitle');
+  if (tSub) {
+    tSub.addEventListener('input', (e) => {
+      if (activeQuotation.t2) activeQuotation.t2.termsSubtitle = e.target.value;
+      renderProposalPreview();
+    });
+  }
+
+  const btnAddTerm = document.getElementById('btn-add-quote-term');
+  if (btnAddTerm) {
+    btnAddTerm.addEventListener('click', () => {
+      if (!activeQuotation.t2) return;
+      if (!activeQuotation.t2.terms) activeQuotation.t2.terms = [];
+      activeQuotation.t2.terms.push({
+        title: 'New Custom Term',
+        desc: 'Specify your customized client clause, delivery constraint, or operational condition here.'
+      });
+      renderQuoteTermsForm();
+      renderProposalPreview();
+      showToast('Custom terms clause added!');
+    });
+  }
+
+  // Card 9: Next Steps & Contact
+  const nsTitle = document.getElementById('quote-t2-nextsteps-title');
+  const nsP1 = document.getElementById('quote-t2-nextsteps-p1');
+  const nsP2 = document.getElementById('quote-t2-nextsteps-p2');
+  const nsSign = document.getElementById('quote-t2-nextsteps-signoff');
+  const nsPhone = document.getElementById('quote-t2-phone');
+  const nsWa = document.getElementById('quote-t2-whatsapp');
+  const nsWeb = document.getElementById('quote-t2-website');
+  const nsInsta = document.getElementById('quote-t2-instagram');
+  const nsFb = document.getElementById('quote-t2-facebook');
+  const nsPin = document.getElementById('quote-t2-pinterest');
+
+  if (nsTitle) nsTitle.addEventListener('input', (e) => { if (activeQuotation.t2?.nextSteps) activeQuotation.t2.nextSteps.title = e.target.value; renderProposalPreview(); });
+  if (nsP1) nsP1.addEventListener('input', (e) => { if (activeQuotation.t2?.nextSteps) activeQuotation.t2.nextSteps.p1 = e.target.value; renderProposalPreview(); });
+  if (nsP2) nsP2.addEventListener('input', (e) => { if (activeQuotation.t2?.nextSteps) activeQuotation.t2.nextSteps.p2 = e.target.value; renderProposalPreview(); });
+  if (nsSign) nsSign.addEventListener('input', (e) => { if (activeQuotation.t2?.nextSteps) activeQuotation.t2.nextSteps.signoff = e.target.value; renderProposalPreview(); });
+  if (nsPhone) nsPhone.addEventListener('input', (e) => { if (activeQuotation.t2?.nextSteps) activeQuotation.t2.nextSteps.phone = e.target.value; renderProposalPreview(); });
+  if (nsWa) nsWa.addEventListener('input', (e) => { if (activeQuotation.t2?.nextSteps) activeQuotation.t2.nextSteps.whatsapp = e.target.value; renderProposalPreview(); });
+  if (nsWeb) nsWeb.addEventListener('input', (e) => { if (activeQuotation.t2?.nextSteps) activeQuotation.t2.nextSteps.website = e.target.value; renderProposalPreview(); });
+  if (nsInsta) nsInsta.addEventListener('input', (e) => { if (activeQuotation.t2?.nextSteps) activeQuotation.t2.nextSteps.instagram = e.target.value; renderProposalPreview(); });
+  if (nsFb) nsFb.addEventListener('input', (e) => { if (activeQuotation.t2?.nextSteps) activeQuotation.t2.nextSteps.facebook = e.target.value; renderProposalPreview(); });
+  if (nsPin) nsPin.addEventListener('input', (e) => { if (activeQuotation.t2?.nextSteps) activeQuotation.t2.nextSteps.pinterest = e.target.value; renderProposalPreview(); });
+
+  // Toolbar Actions: Save Draft
+  const btnSaveDraft = document.getElementById('btn-save-quote-draft');
+  if (btnSaveDraft) {
+    btnSaveDraft.addEventListener('click', () => {
+      try {
+        localStorage.setItem('studio_active_quotation', JSON.stringify(activeQuotation));
+        showToast('Quotation draft saved to browser storage!');
+      } catch (e) {
+        showToast('Draft saved!');
+      }
+    });
+  }
+
+  // Toolbar Actions: Copy Text
+  const btnCopyText = document.getElementById('btn-copy-quote-text');
+  if (btnCopyText) {
+    btnCopyText.addEventListener('click', () => {
+      const total = getCalculatedTotalPrice();
+      const text = [
+        `*TIMEMACHINE & CO — LUXURY WEDDING PROPOSAL*`,
+        `Client: ${activeQuotation.clientName}`,
+        `Couple: ${activeQuotation.coupleNames}`,
+        ``,
+        `*Events Schedule:*`,
+        ...activeQuotation.events.map(ev => `• ${ev.date} (${ev.location}): ${ev.title || ev.name}`),
+        ``,
+        `*Total Investment:* ₹ ${total.toLocaleString('en-IN')}`,
+        ``,
+        `Interactive Web Proposal: ${window.location.origin}/proposal.html?template=${activeQuotation.selectedTemplate}&client=${encodeURIComponent(activeQuotation.clientName)}&price=${encodeURIComponent(total.toLocaleString('en-IN'))}`,
+        ``,
+        `Best regards,`,
+        `Timemachine & Co.`
+      ].join('\n');
+
+      navigator.clipboard.writeText(text);
+      showToast('Quotation summary copied to clipboard!');
+    });
+  }
+
+  // Toolbar Actions: Send WhatsApp
+  const btnSendWa = document.getElementById('btn-send-whatsapp');
+  if (btnSendWa) {
+    btnSendWa.addEventListener('click', () => {
+      const total = getCalculatedTotalPrice();
+      const phoneClean = (activeQuotation.clientPhone || activeQuotation.phone || '').replace(/[^0-9]/g, '');
+      const clientUrl = `${window.location.origin}/proposal.html?template=${activeQuotation.selectedTemplate}&client=${encodeURIComponent(activeQuotation.clientName)}&price=${encodeURIComponent(total.toLocaleString('en-IN'))}`;
+
+      const msg = encodeURIComponent(
+        `Hello ${activeQuotation.clientName},\n\nIt was a pleasure speaking with you! We have prepared your personalized luxury wedding proposal with Timemachine & Co:\n\nTotal Investment: ₹ ${total.toLocaleString('en-IN')}\n\nYou can review your interactive proposal, deliverables, and package options here:\n${clientUrl}\n\nPlease let us know if you have any questions!\n\nWarm regards,\nTimemachine & Co.`
+      );
+
+      const waUrl = phoneClean ? `https://wa.me/${phoneClean}?text=${msg}` : `https://wa.me/?text=${msg}`;
+      window.open(waUrl, '_blank');
+    });
+  }
+
+  // Toolbar Actions: Print / PDF
+  const btnPrintPdf = document.getElementById('btn-print-proposal');
+  if (btnPrintPdf) {
+    btnPrintPdf.addEventListener('click', () => {
+      const element = document.getElementById('proposal-template-preview');
+      if (!element) return;
+
+      const opt = {
+        margin: [5, 5, 5, 5],
+        filename: `Timemachine-Proposal-${(activeQuotation.clientName || 'Client').replace(/\s+/g, '-')}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      if (window.html2pdf) {
+        showToast('Generating high-resolution PDF proposal...');
+        window.html2pdf().set(opt).from(element).save().then(() => {
+          showToast('PDF downloaded successfully!');
+        }).catch(err => {
+          console.warn('html2pdf fallback to print:', err);
+          window.print();
+        });
+      } else {
+        window.print();
+      }
+    });
+  }
+
+  // Toolbar Actions: Copy Clean Client Link (Edit & admin controls hidden for client)
+  const btnCopyProposalUrl = document.getElementById('btn-copy-proposal-url');
+  if (btnCopyProposalUrl) {
+    btnCopyProposalUrl.addEventListener('click', () => {
+      const total = getCalculatedTotalPrice();
+      const vidParam = encodeURIComponent(activeQuotation.t2?.videoUrl || activeQuotation.t2?.bannerUrl || 'https://youtu.be/OctoMQEqK9E');
+      const clientUrl = `${window.location.origin}/proposal.html?template=${encodeURIComponent(activeQuotation.selectedTemplate || 'template2')}&client=${encodeURIComponent(activeQuotation.clientName || 'Client')}&price=${encodeURIComponent(total.toLocaleString('en-IN'))}&video=${vidParam}`;
+      navigator.clipboard.writeText(clientUrl).then(() => {
+        showToast('Clean client proposal link copied! (All editing options hidden for client)');
+      }).catch(() => {
+        prompt('Copy this client proposal link:', clientUrl);
+      });
+    });
+  }
+
+  // Toolbar Actions: Preview Client View Toggle (hides X, +, select, and disables editing)
+  const btnToggleClientView = document.getElementById('btn-toggle-client-view');
+  const previewPaper = document.getElementById('proposal-template-preview');
+  if (btnToggleClientView && previewPaper) {
+    btnToggleClientView.addEventListener('click', () => {
+      previewPaper.classList.toggle('admin-client-view-active');
+      const isActive = previewPaper.classList.contains('admin-client-view-active');
+      previewPaper.querySelectorAll('.inpage-word-editable').forEach(el => {
+        el.setAttribute('contenteditable', isActive ? 'false' : 'true');
+      });
+      const toggleText = document.getElementById('client-view-toggle-text');
+      if (toggleText) {
+        toggleText.textContent = isActive ? '✏️ Return to Admin Edit View' : '👁️ Preview Client View';
+      }
+      showToast(isActive ? 'Client View active: editing controls hidden' : 'Admin Edit View active: editing controls visible');
+    });
+  }
+}
+
+function initInPageWordEditing(container) {
+  if (!container || container._wordEditInit) return;
+  container._wordEditInit = true;
+
+  // Real-time two-way synchronization from in-page typing to left-side form & state
+  container.addEventListener('input', (e) => {
+    const el = e.target.closest('.inpage-word-editable');
+    if (!el) return;
+
+    const rawVal = el.innerText;
+    const textVal = rawVal.trim();
+
+    // 1. Sync activeQuotation state field
+    const fieldPath = el.getAttribute('data-field');
+    if (fieldPath) {
+      if (fieldPath === 'clientName') {
+        activeQuotation.clientName = rawVal;
+      } else if (fieldPath === 'basePrice') {
+        const num = parseInt(textVal.replace(/[^0-9]/g, ''), 10);
+        activeQuotation.basePrice = isNaN(num) ? 0 : num;
+      } else if (fieldPath.startsWith('t2.')) {
+        const parts = fieldPath.split('.');
+        let obj = activeQuotation;
+        for (let i = 0; i < parts.length - 1; i++) {
+          if (!obj[parts[i]]) obj[parts[i]] = {};
+          obj = obj[parts[i]];
+        }
+        obj[parts[parts.length - 1]] = rawVal;
+      }
+    }
+
+    // 2. Sync to matching left-side form input
+    const syncInputId = el.getAttribute('data-sync-input');
+    if (syncInputId) {
+      const leftInp = document.getElementById(syncInputId);
+      if (leftInp && leftInp.value !== rawVal) {
+        if (fieldPath === 'basePrice') {
+          leftInp.value = typeof activeQuotation.basePrice === 'number' && activeQuotation.basePrice > 0 ? activeQuotation.basePrice.toLocaleString('en-IN') : textVal;
+        } else {
+          leftInp.value = rawVal;
+        }
+      }
+    }
+
+    // 3. Events synchronization
+    const eventId = el.getAttribute('data-event-id');
+    const eventProp = el.getAttribute('data-event-prop');
+    if (eventId && eventProp && activeQuotation.events) {
+      const ev = activeQuotation.events.find(item => item.id === eventId);
+      if (ev) {
+        if (eventProp === 'title') ev.title = rawVal;
+        else if (eventProp === 'meta') {
+          const parts = rawVal.split('|').map(s => s.trim());
+          if (parts[0]) ev.date = parts[0];
+          if (parts[1]) ev.location = parts[1];
+        }
+      }
+    }
+
+    // 4. Services synchronization
+    const svcKey = el.getAttribute('data-svc');
+    const svcProp = el.getAttribute('data-svc-prop');
+    if (svcKey && svcProp && activeQuotation.t2?.services?.[svcKey]) {
+      activeQuotation.t2.services[svcKey][svcProp] = rawVal;
+    }
+
+    // 5. Add-ons synchronization
+    const addonId = el.getAttribute('data-addon-id');
+    const addonProp = el.getAttribute('data-addon-prop');
+    if (addonId && addonProp && activeQuotation.t2?.addons) {
+      const add = activeQuotation.t2.addons.find(a => a.id === addonId);
+      if (add) {
+        if (addonProp === 'price') {
+          const p = parseInt(textVal.replace(/[^0-9]/g, ''), 10);
+          if (!isNaN(p)) add.price = p;
+        } else {
+          add[addonProp] = rawVal;
+        }
+      }
+    }
+
+    // 6. Terms synchronization
+    const termIdx = el.getAttribute('data-term-idx');
+    const termProp = el.getAttribute('data-term-prop');
+    if (termIdx !== null && termProp && activeQuotation.t2?.terms) {
+      const idx = parseInt(termIdx, 10);
+      if (activeQuotation.t2.terms[idx]) {
+        activeQuotation.t2.terms[idx][termProp] = rawVal;
+        const leftTermBox = document.querySelector(`[data-term-idx="${idx}"]`);
+        if (leftTermBox) {
+          const targetInp = leftTermBox.querySelector(termProp === 'title' ? '.term-field-title' : '.term-field-desc');
+          if (targetInp) targetInp.value = rawVal;
+        }
+      }
+    }
+
+    // Auto-save changes to localStorage
+    try {
+      localStorage.setItem('studio_active_quotation', JSON.stringify(activeQuotation));
+    } catch (err) {}
+
+    updateClientProposalLink();
+  });
+
+  // Focusout listener to recalculate price display when numbers change
+  container.addEventListener('focusout', (e) => {
+    const el = e.target.closest('.inpage-word-editable');
+    if (!el) return;
+    const fieldPath = el.getAttribute('data-field');
+    if (fieldPath === 'basePrice' || el.getAttribute('data-addon-prop') === 'price') {
+      const total = getCalculatedTotalPrice();
+      const calloutEl = document.getElementById('t2-callout-price');
+      if (calloutEl && !calloutEl.matches(':focus')) {
+        calloutEl.innerText = `₹ ${total > 0 ? total.toLocaleString('en-IN') : '0'}`;
+      }
+      updateClientProposalLink();
+    }
+  });
+}
+
+function showUndoToast(message, onUndo) {
+  const existing = document.getElementById('t2-undo-toast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 't2-undo-toast';
+  toast.className = 't2-undo-toast';
+  toast.innerHTML = `
+    <span>${message}</span>
+    ${onUndo ? '<button type="button" id="t2-undo-btn">Undo</button>' : ''}
+  `;
+  document.body.appendChild(toast);
+
+  const undoBtn = toast.querySelector('#t2-undo-btn');
+  if (undoBtn && onUndo) {
+    undoBtn.addEventListener('click', () => {
+      onUndo();
+      toast.remove();
+    });
+  }
+
+  setTimeout(() => {
+    if (toast.parentNode) {
+      toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(15px)';
+      setTimeout(() => toast.remove(), 300);
+    }
+  }, 6000);
+}
+
+
+function bindProposalRemoveButtons(container) {
+  if (!container) return;
+  container.querySelectorAll('.t2-remove-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const removeType = btn.getAttribute('data-remove-type');
+
+      if (removeType === 'event') {
+        const eventId = btn.getAttribute('data-event-id');
+        const evIdx = activeQuotation.events.findIndex(x => x.id === eventId);
+        if (evIdx !== -1) {
+          const removed = activeQuotation.events.splice(evIdx, 1)[0];
+          renderQuoteEventsForm();
+          renderProposalPreview();
+          updateClientProposalLink();
+          showUndoToast(`Removed "${removed.title || removed.name || 'Event'}"`, () => {
+            activeQuotation.events.splice(evIdx, 0, removed);
+            renderQuoteEventsForm();
+            renderProposalPreview();
+            updateClientProposalLink();
+          });
+        }
+      } else if (removeType === 'service') {
+        const svcKey = btn.getAttribute('data-svc');
+        if (activeQuotation.t2?.services?.[svcKey]) {
+          activeQuotation.t2.services[svcKey].included = false;
+          renderProposalPreview();
+          showUndoToast(`Removed service "${activeQuotation.t2.services[svcKey].title || svcKey}"`, () => {
+            activeQuotation.t2.services[svcKey].included = true;
+            renderProposalPreview();
+          });
+        }
+      } else if (removeType === 'addon') {
+        const addonId = btn.getAttribute('data-addon-id');
+        const add = (activeQuotation.t2?.addons || []).find(a => a.id === addonId);
+        if (add) {
+          add.hidden = true;
+          renderProposalPreview();
+          showUndoToast(`Removed add-on "${add.title}"`, () => {
+            add.hidden = false;
+            renderProposalPreview();
+          });
+        }
+      } else if (removeType === 'term') {
+        const tIdx = parseInt(btn.getAttribute('data-term-idx'), 10);
+        if (activeQuotation.t2?.terms && activeQuotation.t2.terms[tIdx]) {
+          const removedTerm = activeQuotation.t2.terms.splice(tIdx, 1)[0];
+          renderProposalPreview();
+          showUndoToast(`Removed "${removedTerm.title}"`, () => {
+            activeQuotation.t2.terms.splice(tIdx, 0, removedTerm);
+            renderProposalPreview();
+          });
+        }
+      } else if (removeType === 'term-card') {
+        const termId = btn.getAttribute('data-term-id');
+        activeQuotation.t2.hiddenSections = activeQuotation.t2.hiddenSections || {};
+        activeQuotation.t2.hiddenSections[termId] = true;
+        renderProposalPreview();
+        showUndoToast(`Removed payment card`, () => {
+          delete activeQuotation.t2.hiddenSections[termId];
+          renderProposalPreview();
+        });
+      } else if (removeType === 'section') {
+        const sectionKey = btn.getAttribute('data-section');
+        activeQuotation.t2.hiddenSections = activeQuotation.t2.hiddenSections || {};
+        activeQuotation.t2.hiddenSections[sectionKey] = true;
+        renderProposalPreview();
+        showUndoToast(`Removed section`, () => {
+          delete activeQuotation.t2.hiddenSections[sectionKey];
+          renderProposalPreview();
+        });
+      } else if (removeType === 'custom-section') {
+        const customId = btn.getAttribute('data-custom-id');
+        if (customId && activeQuotation.t2?.customSections) {
+          const removedIdx = activeQuotation.t2.customSections.findIndex(s => s.id === customId);
+          if (removedIdx !== -1) {
+            const removedSec = activeQuotation.t2.customSections.splice(removedIdx, 1)[0];
+            renderProposalPreview();
+            showUndoToast(`Removed "${removedSec.title}"`, () => {
+              activeQuotation.t2.customSections.splice(removedIdx, 0, removedSec);
+              renderProposalPreview();
+            });
+          }
+        }
+      }
+    });
+  });
+}
+
+function bindAdminAddSectionControls(container) {
+  if (!container) return;
+
+  container.querySelectorAll('.t2-add-section-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Close any other open popovers
+      container.querySelectorAll('.t2-add-popover').forEach(p => p.remove());
+
+      const afterSec = btn.getAttribute('data-after-section');
+      const parentRow = btn.closest('.t2-add-section-row');
+      if (!parentRow) return;
+
+      const popover = document.createElement('div');
+      popover.className = 't2-add-popover';
+
+      let itemsHtml = `
+        <button type="button" class="t2-add-popover-item" data-action="add-custom">
+          <span>➕</span> Add New Section
+        </button>
+      `;
+
+      if (afterSec === 'events') {
+        itemsHtml += `
+          <button type="button" class="t2-add-popover-item" data-action="add-event">
+            <span>📅</span> Add New Event Card
+          </button>
+        `;
+      }
+
+      const hiddenKeys = Object.keys(activeQuotation.t2?.hiddenSections || {}).filter(k => activeQuotation.t2.hiddenSections[k]);
+      if (hiddenKeys.length > 0) {
+        const sectionLabels = {
+          video: 'Cinematic Film Player',
+          about: 'About Us / Timemachine & Co',
+          gallery: 'Showcase Gallery',
+          events: 'Your Events',
+          services: 'Services Offered',
+          quote: 'Quote Callout',
+          timeline: 'Payment Timeline',
+          addons: 'Additional Services',
+          terms: 'Terms of Service',
+          nextsteps: 'Next Steps'
+        };
+        hiddenKeys.forEach(k => {
+          itemsHtml += `
+            <button type="button" class="t2-add-popover-item" data-action="restore" data-section="${k}">
+              <span>🔄</span> Restore ${sectionLabels[k] || k}
+            </button>
+          `;
+        });
+      }
+
+      popover.innerHTML = itemsHtml;
+      parentRow.appendChild(popover);
+
+      popover.querySelectorAll('.t2-add-popover-item').forEach(item => {
+        item.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const action = item.getAttribute('data-action');
+          if (action === 'add-custom') {
+            activeQuotation.t2.customSections = activeQuotation.t2.customSections || [];
+            activeQuotation.t2.customSections.push({
+              id: 'sec_' + Date.now(),
+              title: 'Special Highlights & Inclusions',
+              desc: 'Write custom arrangements, event deliverables, equipment notes, or client-specific terms here. Click directly on this text to edit.'
+            });
+            popover.remove();
+            renderProposalPreview();
+            showUndoToast('New section added!');
+          } else if (action === 'add-event') {
+            activeQuotation.events.push({
+              id: 'ev_' + Date.now(),
+              title: 'New Ceremony / Event',
+              date: 'TBD Date',
+              location: 'Hyderabad',
+              candidPhoto: 1,
+              candidVideo: 1,
+              tradPhoto: 1,
+              tradVideo: 1
+            });
+            popover.remove();
+            renderQuoteEventsForm();
+            renderProposalPreview();
+            updateClientProposalLink();
+            showUndoToast('New event card added!');
+          } else if (action === 'restore') {
+            const secKey = item.getAttribute('data-section');
+            if (activeQuotation.t2?.hiddenSections && secKey) {
+              delete activeQuotation.t2.hiddenSections[secKey];
+            }
+            popover.remove();
+            renderProposalPreview();
+            showUndoToast('Section restored!');
+          }
+        });
+      });
+    });
+  });
+
+  // Close popover when clicking anywhere else
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.t2-add-popover') && !e.target.closest('.t2-add-section-btn')) {
+      container.querySelectorAll('.t2-add-popover').forEach(p => p.remove());
+    }
+  });
+}
+
+function initQuotationGenerator() {
+  // Try restoring saved draft
+  const savedDraft = localStorage.getItem('studio_active_quotation');
+  if (savedDraft) {
+    try {
+      const parsed = JSON.parse(savedDraft);
+      if (parsed && typeof parsed === 'object') {
+        // Deep merge draft with activeQuotation defaults
+        activeQuotation = { ...activeQuotation, ...parsed };
+        if (parsed.t2) activeQuotation.t2 = { ...activeQuotation.t2, ...parsed.t2 };
+
+        // Normalize if previous draft had "Dear Bhavya Alapati" or inbuilt 25,000
+        if (activeQuotation.t2?.greetingTitle === 'Dear Bhavya Alapati') {
+          activeQuotation.t2.greetingTitle = 'Dear';
+        }
+        if (activeQuotation.t2?.priceSection?.greeting === 'Dear Bhavya Alapati') {
+          activeQuotation.t2.priceSection.greeting = 'Dear';
+        }
+        if (activeQuotation.basePrice === 25000 || activeQuotation.basePrice === '25,000') {
+          activeQuotation.basePrice = '';
+        }
+        if (!activeQuotation.t2) activeQuotation.t2 = {};
+        if (!activeQuotation.t2.videoUrl) {
+          activeQuotation.t2.videoUrl = activeQuotation.t2.bannerUrl || 'https://youtu.be/OctoMQEqK9E';
+        }
+        if (!activeQuotation.t2.bannerUrl) {
+          activeQuotation.t2.bannerUrl = activeQuotation.t2.videoUrl;
+        }
+
+        // Normalize Terms of Service to exactly match report-qqlpopap.pdf
+        if (activeQuotation.t2?.terms?.[0]?.title === 'Travel & Accommodation' || !activeQuotation.t2?.terms || activeQuotation.t2.terms[0]?.title !== 'Travel Expense') {
+          activeQuotation.t2.terms = [
+            {
+              title: 'Travel Expense',
+              desc: 'You shall arrange for the travel and accommodation of our shoot crew for all your events occurring in places away from hyderabad.'
+            },
+            {
+              title: 'Project Cancellation',
+              desc: 'If you cancel the project after the advance payment & reserving team schedules for you, the payments cannot be returned.'
+            },
+            {
+              title: 'Delivery Timeline',
+              desc: 'We strictly adhere to deliveries on the mentioned timeline. We do not entertain any early requests, as it will hamper timelines of other deliverables.'
+            },
+            {
+              title: 'Change of Plans -',
+              desc: 'Any change of plans or postponement of events will be accommodated with the best team available on the new dates and chargeable depending on the type of events and crew required.'
+            },
+            {
+              title: 'Shoot Permissions',
+              desc: 'Please note that all the required government permissions for any couple shoot shall be attained by the clients and the team is no way responsible for it. In case of any fines/ inconvenience to the shoot, we are not to be held responsible.'
+            },
+            {
+              title: 'Print Albums',
+              desc: 'Photos selection has to be given by the client and that is mandatory. After the selection has been given it will take 25-30 days for the team to send you the layouts and once the approval has been made from the client, then it will take a week to hand over the albums\nIf selections are not made for more than 7 months from the date of the event then each album will be charged Rs. 15,000/- extra'
+            },
+            {
+              title: 'Security for Loss',
+              desc: 'Client agrees to indemnify and hold harmless to the crew for any liability, damage or loss, related to technological failure, including data loss.'
+            },
+            {
+              title: 'Data Safety',
+              desc: 'Although we’ve never lost any event’s data in the past 12 years, in the rarest probability of any data loss, we are liable to shoot another event for free or deduct the corresponding event charges.'
+            },
+            {
+              title: 'Additional Services Quality',
+              desc: 'We don’t take responsibility for the quality of Web-live, LED walls and other services, since they are provided by 3rd party vendors. Our primary focus lies on great work with our photos & videos.'
+            },
+            {
+              title: 'Video Revisions Timeline:',
+              desc: 'Any requests for video changes must be communicated within 20-30days from the date of final output delivery.'
+            },
+            {
+              title: 'Final Payment & Editing:',
+              desc: 'Post-event editing work will begin only after the final payment has been successfully completed. This ensures a streamlined workflow and helps us maintain our quality standards.'
+            }
+          ];
+        }
+
+        if (activeQuotation.t2?.services?.films) {
+          activeQuotation.t2.services.films.title = 'Cinematic Wedding Film';
+        }
+      }
+    } catch (e) {
+      console.warn('Could not parse stored quotation draft:', e);
+    }
+  }
+
+  populateQuotationForm();
+  renderProposalPreview();
+  bindQuotationEvents();
+  updateClientProposalLink();
+}
+
 // Init Admin App
 document.addEventListener('DOMContentLoaded', () => {
   initAdminAuth();
@@ -2344,3 +3382,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initSaveContent();
   initQuotationGenerator();
 });
+
+

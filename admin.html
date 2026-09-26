@@ -1027,132 +1027,871 @@
       margin: 0.5rem 0;
     }
 
-    /* TEMPLATE 2: MODERN DARK GLASSMORPHISM LUXURY PROPOSAL PREVIEW STYLES */
-    .proposal-paper-dark {
-      background: radial-gradient(circle at 12% 12%, rgba(245, 158, 11, 0.14) 0%, transparent 45%),
-                  radial-gradient(circle at 88% 88%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
-                  radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 100%),
-                  #09090B;
-      color: #F4F4F5;
+    /* TEMPLATE 2: EDITORIAL WARM CREAM PDF PROPOSAL (Exact match to report-qqlpopap.pdf) */
+    .proposal-paper-template2 {
+      background: #FAF7F2;
+      color: #1A1816;
       font-family: var(--font-paragraph);
-      padding: 3.25rem 2.75rem;
-      border-radius: 20px;
-      border: 1px solid rgba(245, 158, 11, 0.35);
-      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85), 0 0 45px rgba(245, 158, 11, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+      padding: 0;
+      border-radius: 12px;
+      border: 1px solid rgba(197, 160, 89, 0.25);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
       position: relative;
       overflow: hidden;
+      max-width: 880px;
+      margin: 0 auto;
     }
 
-    .proposal-paper-dark::before {
-      content: '';
+    .t2-top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 2.2rem;
+      background: #FAF7F2;
+      border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+    }
+
+    .t2-top-header-title {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #1A1816;
+    }
+
+    .t2-top-header-logo {
+      border: 1.5px solid #C5A059;
+      color: #C5A059;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.2rem 0.55rem;
+      letter-spacing: 0.1em;
+      text-align: center;
+      line-height: 1.1;
+    }
+
+    .t2-top-header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1A1816;
+    }
+
+    .t2-top-header-tag {
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #8C6D37;
+      letter-spacing: 0.05em;
+    }
+
+    .t2-hero-card {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 877 / 1270;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-sizing: border-box;
+      padding: 2rem;
+    }
+
+    .t2-hero-client-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      color: #8C6D37;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: -0.01em;
+      margin-top: -30px;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+    }
+
+    .t2-section-body {
+      padding: 2.75rem 3.25rem;
+      background: #FAF7F2;
+    }
+
+    .t2-greeting-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #B38F4D;
+      margin-bottom: 0.5rem;
+    }
+
+    .t2-greeting-text {
+      font-family: var(--font-paragraph);
+      font-size: 0.95rem;
+      color: #2C2622;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .t2-banner-card {
+      position: relative;
+      background: #1A1816;
+      border-radius: 14px;
+      overflow: hidden;
+      margin: 1.5rem 0 2rem 0;
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+      border: 1px solid rgba(197, 160, 89, 0.35);
+    }
+    .t2-banner-card iframe,
+    .t2-banner-card video {
       position: absolute;
-      top: -150px;
-      right: -150px;
-      width: 350px;
-      height: 350px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(245, 158, 11, 0.18) 0%, transparent 70%);
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .t2-video-unmute-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.12);
+      cursor: pointer;
+      z-index: 10;
+      transition: opacity 0.35s ease, background 0.25s ease;
+    }
+    .t2-video-unmute-overlay:hover {
+      background: rgba(0, 0, 0, 0.28);
+    }
+    .t2-video-unmute-overlay.unmuted {
+      opacity: 0;
       pointer-events: none;
     }
-
-    .proposal-glass-card {
-      background: linear-gradient(145deg, rgba(28, 28, 35, 0.8) 0%, rgba(18, 18, 22, 0.88) 100%);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(245, 158, 11, 0.28);
-      border-radius: 16px;
-      padding: 1.65rem;
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-    }
-
-    .proposal-glass-card:hover {
-      border-color: rgba(245, 158, 11, 0.55);
-      transform: translateY(-2px);
-      box-shadow: 0 16px 40px rgba(245, 158, 11, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-    }
-
-    .proposal-dark-badge {
-      background: linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(212, 175, 55, 0.12) 100%);
-      border: 1px solid rgba(245, 158, 11, 0.6);
-      color: #FBBF24;
-      font-family: var(--font-ui);
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0.28rem 0.75rem;
+    .t2-unmute-badge {
+      background: rgba(26, 24, 22, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(197, 160, 89, 0.6);
+      color: #FAF7F2;
+      padding: 0.7rem 1.4rem;
       border-radius: 999px;
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15);
+      gap: 0.65rem;
+      font-family: var(--font-ui, sans-serif);
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+      transition: all 0.25s ease;
+      animation: t2Pulse 2.5s infinite;
+      user-select: none;
     }
-
-    .proposal-crew-chip {
-      background: rgba(39, 39, 42, 0.65);
-      border: 1px solid rgba(245, 158, 11, 0.22);
-      font-family: var(--font-ui);
+    .t2-video-unmute-overlay:hover .t2-unmute-badge {
+      transform: scale(1.06);
+      background: rgba(26, 24, 22, 0.96);
+      border-color: #C5A059;
+      box-shadow: 0 12px 35px rgba(197, 160, 89, 0.35);
+    }
+    @keyframes t2Pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    .t2-sound-toggle-btn {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      background: rgba(26, 24, 22, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(197, 160, 89, 0.45);
+      color: #FAF7F2;
+      font-family: var(--font-ui, sans-serif);
       font-size: 0.78rem;
-      color: #E4E4E7;
-      padding: 0.3rem 0.7rem;
-      border-radius: 8px;
-      font-weight: 500;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      z-index: 15;
       display: inline-flex;
       align-items: center;
+      gap: 6px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+      transition: all 0.2s ease;
+    }
+    .t2-sound-toggle-btn:hover {
+      background: #C5A059;
+      color: #1A1816;
+      border-color: #C5A059;
+      transform: scale(1.05);
+    }
+
+    .t2-star-divider {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 3.25rem 0;
+    }
+
+    .t2-section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1A1816;
+      margin-bottom: 1.25rem;
+    }
+
+    .t2-section-subtitle {
+      font-family: var(--font-paragraph);
+      font-size: 0.92rem;
+      color: #55524E;
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+    }
+
+    .t2-about-text {
+      font-family: var(--font-paragraph);
+      font-size: 0.95rem;
+      color: #2C2622;
+      line-height: 1.8;
+    }
+
+    .t2-gallery-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 2.5rem 0;
+    }
+
+    .t2-gallery-col {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .t2-gallery-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+      cursor: pointer;
+    }
+
+    .t2-gallery-item:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16);
+    }
+
+    .t2-gallery-item:hover .t2-gallery-img {
+      transform: scale(1.06);
+      filter: brightness(1.04);
+    }
+
+    .t2-gallery-img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+    }
+
+    .t2-gallery-edit-btn {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(26, 24, 22, 0.88);
+      backdrop-filter: blur(6px);
+      color: #FFF;
+      border: 1px solid rgba(197, 160, 89, 0.7);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.38rem 0.85rem;
+      border-radius: 20px;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease;
+      cursor: pointer;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .t2-gallery-item:hover .t2-gallery-edit-btn {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .t2-gallery-edit-btn:hover {
+      background: #C5A059;
+      color: #1A1816;
+      border-color: #C5A059;
+    }
+
+    body.client-view-mode .t2-gallery-edit-btn,
+    .admin-client-view-active .t2-gallery-edit-btn {
+      display: none !important;
+    }
+
+    .t2-events-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+      margin: 1.75rem 0 2.5rem 0;
+    }
+
+    .t2-event-card {
+      position: relative;
+      background: #F4EAD8;
+      border: 1px solid rgba(197, 160, 89, 0.35);
+      border-radius: 14px;
+      padding: 1.65rem 2rem;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    }
+
+    .t2-event-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(197, 160, 89, 0.15);
+      border-color: #C5A059;
+    }
+
+    .t2-remove-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(140, 109, 55, 0.14);
+      border: 1px solid rgba(140, 109, 55, 0.32);
+      color: #6C5428;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 0;
+      z-index: 20;
+      opacity: 0.75;
+    }
+
+    .t2-event-card:hover .t2-remove-btn,
+    .t2-service-card:hover .t2-remove-btn,
+    .t2-addon-card:hover .t2-remove-btn,
+    .t2-term-card:hover .t2-remove-btn,
+    .t2-section-wrap:hover .t2-remove-btn,
+    .t2-section-header-row:hover .t2-remove-btn,
+    .t2-video-wrap:hover .t2-remove-btn,
+    .t2-remove-btn:hover {
+      opacity: 1;
+    }
+
+    .t2-remove-btn:hover {
+      background: #E53E3E !important;
+      border-color: #E53E3E !important;
+      color: #FFFFFF !important;
+      transform: scale(1.15) rotate(90deg);
+      box-shadow: 0 4px 12px rgba(229, 62, 62, 0.35);
+    }
+
+    .t2-section-wrap {
+      position: relative;
+      transition: all 0.25s ease;
+    }
+
+    .t2-section-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      margin-bottom: 1.25rem;
+    }
+    .t2-section-header-row .t2-section-title {
+      margin: 0 !important;
+    }
+    .t2-section-header-row .t2-remove-btn {
+      position: static;
+      opacity: 0.55;
+    }
+
+    .t2-undo-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1A1816;
+      color: #FAF7F2;
+      padding: 0.85rem 1.4rem;
+      border-radius: 999px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-family: var(--font-ui, sans-serif);
+      font-size: 0.88rem;
+      z-index: 99999;
+      animation: t2SlideUp 0.3s ease;
+    }
+    .t2-undo-toast button {
+      background: #C5A059;
+      color: #1A1816;
+      border: none;
+      padding: 0.3rem 0.85rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .t2-undo-toast button:hover {
+      background: #dfca9f;
+    }
+    @keyframes t2SlideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Add Section Row & Plus Button */
+    .t2-add-section-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 1.25rem 0 0.5rem 0;
+      position: relative;
+    }
+
+    .t2-add-section-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px dashed #C5A059;
+      background: #FAF7F2;
+      color: #8C6D37;
+      font-size: 1.35rem;
+      font-weight: 500;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 8px rgba(197, 160, 89, 0.15);
+      padding: 0;
+      z-index: 10;
+    }
+
+    .t2-add-section-btn:hover {
+      background: #C5A059;
+      border-color: #C5A059;
+      border-style: solid;
+      color: #FFFFFF;
+      transform: scale(1.18);
+      box-shadow: 0 4px 14px rgba(197, 160, 89, 0.4);
+    }
+
+    .t2-add-section-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Add Section Popover Menu */
+    .t2-add-popover {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #FFFFFF;
+      border: 1px solid rgba(197, 160, 89, 0.4);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      padding: 0.5rem;
+      min-width: 220px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
       gap: 0.35rem;
-      backdrop-filter: blur(4px);
+      animation: popoverFadeIn 0.2s ease-out;
+    }
+    @keyframes popoverFadeIn {
+      from { opacity: 0; transform: translate(-50%, -6px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+    .t2-add-popover-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.55rem 0.85rem;
+      border-radius: 8px;
+      background: transparent;
+      border: none;
+      font-family: var(--font-paragraph);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #1A1816;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s ease;
+      width: 100%;
+    }
+    .t2-add-popover-item:hover {
+      background: #F7EFE0;
+      color: #8C6D37;
+    }
+
+    /* Client View Mode in Admin Preview: Completely hide X buttons, + buttons, select buttons, and editing */
+    .admin-client-view-active .t2-remove-btn,
+    .admin-client-view-active .t2-add-section-row,
+    .admin-client-view-active .t2-add-section-btn,
+    .admin-client-view-active .t2-addon-btn,
+    .admin-client-view-active .t2-undo-toast,
+    .admin-client-view-active .t2-add-popover,
+    .admin-client-view-active #t2-restore-all-sections-btn {
+      display: none !important;
+    }
+
+    .admin-client-view-active .inpage-word-editable {
+      cursor: default !important;
+      outline: none !important;
+      border-bottom: none !important;
+      user-select: text !important;
+    }
+    .admin-client-view-active .inpage-word-editable:hover {
+      outline: none !important;
+      box-shadow: none !important;
+      background: transparent !important;
+    }
+
+    .t2-event-meta {
+      font-family: var(--font-paragraph);
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #8C6D37;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.35rem;
+      text-transform: uppercase;
+    }
+
+    .t2-event-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: #1A1816;
+      margin-bottom: 0.65rem;
+    }
+
+    .t2-crew-line {
+      font-family: var(--font-paragraph);
+      font-size: 0.92rem;
+      color: #2C2622;
+      line-height: 1.65;
+      background: rgba(255, 255, 255, 0.55);
+      padding: 0.5rem 0.85rem;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .t2-service-card {
+      position: relative;
+      background: #F7EFE0;
+      border-radius: 14px;
+      padding: 1.85rem;
+      margin-bottom: 1.5rem;
+    }
+    .t2-service-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .t2-service-card-title {
+      font-family: var(--font-paragraph);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #1A1816;
+      margin-bottom: 0.5rem;
+    }
+
+    .t2-service-card-desc {
+      font-family: var(--font-paragraph);
+      font-size: 0.92rem;
+      color: #2C2622;
+      line-height: 1.65;
+    }
+
+    .t2-service-card-note {
+      font-family: var(--font-paragraph);
+      font-size: 0.88rem;
+      color: #55524E;
+      margin-top: 0.65rem;
+      font-style: italic;
+    }
+
+    .t2-quote-callout {
+      text-align: center;
+      padding: 2.5rem 1rem;
+    }
+
+    .t2-quote-greeting {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: #B38F4D;
+      margin-bottom: 0.35rem;
+    }
+
+    .t2-quote-sub {
+      font-family: var(--font-paragraph);
+      font-size: 0.95rem;
+      color: #2C2622;
+      margin-bottom: 0.75rem;
+    }
+
+    .t2-quote-val {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: #B38F4D;
+    }
+
+    .t2-payment-card-advance {
+      background: #DFCA9F;
+      border-radius: 14px;
+      padding: 1.85rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .t2-payment-card-final {
+      background: #F4E9D5;
+      border-radius: 14px;
+      padding: 1.85rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .t2-payment-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #1A1816;
+      margin-bottom: 0.5rem;
+    }
+
+    .t2-payment-desc {
+      font-family: var(--font-paragraph);
+      font-size: 0.92rem;
+      color: #2C2622;
+      line-height: 1.65;
+    }
+
+    .t2-payment-note {
+      font-family: var(--font-paragraph);
+      font-size: 0.9rem;
+      color: #1A1816;
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+
+    .t2-addon-card {
+      background: #DFCA9F;
+      border-radius: 16px;
+      padding: 2.25rem 2.25rem 1.75rem 2.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.25s ease;
+    }
+    .t2-addon-card.selected {
+      background: #D4BD8E;
+      box-shadow: 0 8px 25px rgba(180, 140, 70, 0.25);
+    }
+
+    .t2-addon-title {
+      font-family: var(--font-paragraph);
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: #1A1816;
+      margin-bottom: 0.65rem;
+    }
+
+    .t2-addon-desc {
+      font-family: var(--font-paragraph);
+      font-size: 0.95rem;
+      color: #2C2622;
+      line-height: 1.65;
+      margin-bottom: 1.75rem;
+    }
+
+    .t2-addon-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.55rem;
+      margin-top: 1rem;
+    }
+
+    .t2-addon-price {
+      font-family: var(--font-paragraph);
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #1A1816;
+    }
+
+    .t2-addon-btn {
+      background: #F4E9D5;
+      border: 1px solid rgba(197, 160, 89, 0.4);
+      color: #1A1816;
+      font-family: var(--font-paragraph);
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 0.6rem 1.8rem;
+      border-radius: 999px;
+      cursor: pointer;
       transition: all 0.2s ease;
     }
 
-    .proposal-crew-chip:hover {
-      background: rgba(245, 158, 11, 0.15);
-      border-color: rgba(245, 158, 11, 0.45);
+    .t2-addon-btn:hover {
+      background: #EAE0C8;
+    }
+
+    .t2-addon-btn.active {
+      background: #1A1816;
+      color: #FAF7F2;
+      border-color: #1A1816;
+    }
+
+    .t2-term-card {
+      position: relative;
+      border-radius: 14px;
+      padding: 1.65rem 1.85rem;
+      margin-bottom: 1.35rem;
+    }
+    .t2-term-card-beige {
+      background: #DFCA9F;
+    }
+    .t2-term-card-cream {
+      background: #F4E9D5;
+    }
+
+    .t2-term-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #1A1816;
+      margin-bottom: 0.5rem;
+    }
+
+    .t2-term-desc {
+      font-family: var(--font-paragraph);
+      font-size: 0.92rem;
+      color: #2C2622;
+      line-height: 1.65;
+      white-space: pre-line;
+    }
+
+    .t2-nextsteps-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1A1816;
+      margin-bottom: 1.25rem;
+    }
+
+    .t2-nextsteps-desc {
+      font-family: var(--font-paragraph);
+      font-size: 0.95rem;
+      color: #2C2622;
+      line-height: 1.75;
+      margin-bottom: 1rem;
+    }
+
+    .t2-contact-icons {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      margin-top: 1.75rem;
+    }
+
+    .t2-contact-circle {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 1.5px solid #1A1816;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #1A1816;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .t2-contact-circle:hover {
+      background: #1A1816;
       color: #FFFFFF;
     }
 
-    .proposal-gold-text {
-      background: linear-gradient(135deg, #FFFFFF 30%, #FBBF24 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .proposal-dark-price-box {
-      background: linear-gradient(145deg, rgba(20, 20, 24, 0.95) 0%, rgba(35, 35, 40, 0.95) 100%);
-      border: 2px solid #F59E0B;
-      border-radius: 20px;
-      padding: 2.5rem 2rem;
+    .t2-footer {
       text-align: center;
-      margin-top: 2rem;
-      box-shadow: 0 15px 50px rgba(245, 158, 11, 0.28), inset 0 1px 1px rgba(255, 255, 255, 0.2);
-      position: relative;
+      padding: 3.5rem 2rem 2.5rem 2rem;
+      border-top: 1px solid rgba(197, 160, 89, 0.2);
+      background: #FAF7F2;
     }
 
-    .proposal-dark-price-val {
-      font-family: var(--font-heading);
-      font-size: 3rem;
-      color: #FBBF24;
-      font-weight: 800;
-      margin: 0.6rem 0;
-      text-shadow: 0 0 30px rgba(245, 158, 11, 0.5);
-      letter-spacing: -0.02em;
+    .t2-footer-logo {
+      display: inline-block;
+      border: 2px solid #C5A059;
+      padding: 0.6rem 0.9rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #C5A059;
+      letter-spacing: 0.12em;
+      margin-bottom: 1rem;
+    }
+
+    .t2-footer-socials {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.25rem;
+      margin-top: 1.5rem;
     }
 
     .proposal-accept-btn {
-      background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 50%, #D97706 100%);
-      color: #09090B;
+      background: linear-gradient(135deg, #DFB96C 0%, #C5A059 100%);
+      color: #1A1816;
       font-family: var(--font-ui);
-      font-size: 1.05rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
       border: none;
-      padding: 1.2rem 2.5rem;
+      padding: 1.1rem 2.2rem;
       border-radius: 999px;
       cursor: pointer;
-      box-shadow: 0 12px 35px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      box-shadow: 0 8px 25px rgba(197, 160, 89, 0.35);
+      transition: all 0.25s ease;
+    }
+    .proposal-accept-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(197, 160, 89, 0.5);
+    }
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       display: inline-flex;
       align-items: center;
@@ -1168,6 +1907,50 @@
       transform: translateY(-2px) scale(1.01);
       box-shadow: 0 18px 45px rgba(245, 158, 11, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.6);
       background: linear-gradient(135deg, #FFFFFF 0%, #FBBF24 50%, #F59E0B 100%);
+    }
+
+
+
+    /* IN-PAGE EDITABLE TEXT BLOCKS (WORD STYLE) */
+    [contenteditable="true"].inpage-word-editable {
+      position: relative;
+      outline: 1.5px dashed transparent;
+      outline-offset: 3px;
+      border-radius: 4px;
+      cursor: text;
+      transition: all 0.18s ease;
+      min-height: 1.1em;
+    }
+
+    [contenteditable="true"].inpage-word-editable:hover {
+      outline: 1.5px dashed rgba(197, 160, 89, 0.65);
+      background-color: rgba(197, 160, 89, 0.05);
+    }
+
+    [contenteditable="true"].inpage-word-editable:focus {
+      outline: 2px solid #C5A059 !important;
+      outline-offset: 3px;
+      background-color: rgba(255, 255, 255, 0.95) !important;
+      box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.22), 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+      color: #1A1816 !important;
+    }
+
+    [contenteditable="true"].inpage-word-editable:focus::after {
+      content: "✎ In-Page Edit";
+      position: absolute;
+      top: -24px;
+      right: 0;
+      background: #1A1816;
+      color: #C5A059;
+      font-size: 0.68rem;
+      font-family: var(--font-ui);
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+      pointer-events: none;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
 
     /* RESPONSIVE MEDIA QUERIES FOR STUDIO ADMIN PORTAL */
@@ -1283,6 +2066,10 @@
         break-inside: avoid;
         margin-bottom: 2rem !important;
         padding-bottom: 1.5rem !important;
+      }
+      .t2-remove-btn, .t2-undo-toast, .t2-restore-banner {
+        display: none !important;
+        visibility: hidden !important;
       }
     }
   </style>
@@ -1769,6 +2556,7 @@
             <div style="display: flex; align-items: center; gap: 0.4rem; background: #FAF5E8; border: 1px solid #E5C98D; padding: 0.25rem 0.75rem; border-radius: 999px;">
               <span style="font-size: 0.72rem; color: #C5A059; font-family: var(--font-ui); font-weight: 700;">TEMPLATE:</span>
               <select id="quote-template-select" style="background: transparent; border: none; font-size: 0.8rem; font-family: var(--font-ui); font-weight: 700; color: #C5A059; cursor: pointer; outline: none;">
+                <option value="template2" selected>2. Editorial PDF Luxury (report-qqlpopap)</option>
                 <option value="template1">1. Fine Art Warm Cream</option>
               </select>
             </div>
@@ -1780,7 +2568,7 @@
               Print / Save PDF Proposal
             </button>
 
-            <a href="proposal.html?client=Bhavya+Allu" target="_blank" class="quotation-action-btn" id="btn-view-client-proposal" style="background: #1A1816; color: #FFFFFF; border: 1px solid #C5A059; text-decoration: none;">
+            <a href="proposal.html?template=template2&client=Bhavya+Alapati" target="_blank" class="quotation-action-btn" id="btn-view-client-proposal" style="background: #1A1816; color: #FFFFFF; border: 1px solid #C5A059; text-decoration: none;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
               🔗 Interactive Web Proposal Link
             </a>
@@ -1788,6 +2576,14 @@
             <button type="button" class="quotation-action-btn quotation-btn-whatsapp" id="btn-send-whatsapp">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
               Send via WhatsApp
+            </button>
+            <button type="button" class="admin-btn-outline" id="btn-copy-proposal-url" style="width: auto; padding: 0.65rem 1rem; border-color: #C5A059; color: #8C6D37;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+              Copy Client Link
+            </button>
+
+            <button type="button" class="admin-btn-outline" id="btn-toggle-client-view" style="width: auto; padding: 0.65rem 1rem; background: #FAF5E8; border-color: #C5A059; color: #8C6D37; font-weight: 600;">
+              <span id="client-view-toggle-text">👁️ Preview Client View</span>
             </button>
 
             <button type="button" class="admin-btn-outline" id="btn-copy-quote-text" style="width: auto; padding: 0.65rem 1rem;">
@@ -1806,42 +2602,79 @@
           <!-- LEFT FORM BUILDER COLUMN -->
           <div class="quotation-form-column">
 
-            <!-- 1. Client Info Card -->
+            <!-- 1. Client Info & Hero Cover Card -->
             <div class="admin-card">
               <div class="admin-card-header">
                 <div>
                   <h3 class="admin-card-title">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                    1. Client & Greeting Info
+                    1. Hero Cover & Greeting Section
                   </h3>
-                  <p class="admin-card-desc">Personal details auto-populated from leads or entered manually.</p>
+                  <p class="admin-card-desc">Personal details, opening hero cover graphics, and greeting note.</p>
                 </div>
               </div>
 
               <div class="admin-form-grid">
                 <div class="admin-form-group">
                   <label class="admin-label">Primary Client Name</label>
-                  <input type="text" id="quote-client-name" class="admin-input" placeholder="e.g. Niharika & Anish">
+                  <input type="text" id="quote-client-name" class="admin-input" placeholder="e.g. Bhavya Alapati" value="Bhavya Alapati">
                 </div>
 
                 <div class="admin-form-group">
                   <label class="admin-label">Groom & Bride Names</label>
-                  <input type="text" id="quote-couple-names" class="admin-input" placeholder="Groom: Anish • Bride: Niharika">
+                  <input type="text" id="quote-couple-names" class="admin-input" placeholder="Groom: Anish • Bride: Bhavya Alapati" value="Groom: Anish • Bride: Bhavya Alapati">
                 </div>
 
                 <div class="admin-form-group">
                   <label class="admin-label">Phone / WhatsApp Number</label>
-                  <input type="text" id="quote-client-phone" class="admin-input" placeholder="+91 9876543210">
+                  <input type="text" id="quote-client-phone" class="admin-input" placeholder="+91 97056 32982" value="+91 97056 32982">
                 </div>
 
                 <div class="admin-form-group">
                   <label class="admin-label">Email Address</label>
-                  <input type="email" id="quote-client-email" class="admin-input" placeholder="client@example.com">
+                  <input type="email" id="quote-client-email" class="admin-input" placeholder="client@example.com" value="bhavya.alapati@wedding.com">
+                </div>
+
+                <div class="admin-form-group col-full">
+                  <label class="admin-label">Hero Tagline / Subtitle</label>
+                  <input type="text" id="quote-t2-hero-subtitle" class="admin-input" value="Because Every Frame Has a Story to Tell">
+                </div>
+
+                <div class="admin-form-group col-full">
+                  <label class="admin-label">Greeting Headline</label>
+                  <input type="text" id="quote-t2-greeting-title" class="admin-input" value="Dear">
+                </div>
+
+                <div class="admin-form-group col-full">
+                  <label class="admin-label">Welcome Message Paragraph</label>
+                  <textarea id="quote-t2-welcome-text" class="admin-textarea" style="min-height: 80px;">We appreciate the opportunity to be a part of your special day and capture the timeless moments that will make your wedding a cherished memory.</textarea>
+                </div>
+
+                <div class="admin-form-group col-full" style="background: rgba(197, 160, 89, 0.08); padding: 1.15rem; border-radius: 12px; border: 1px dashed rgba(197, 160, 89, 0.45); margin-top: 0.5rem; margin-bottom: 0.5rem;">
+                  <label class="admin-label" style="display: flex; align-items: center; justify-content: space-between; font-weight: 700; color: #8C6D37; margin-bottom: 0.5rem;">
+                    <span style="display: flex; align-items: center; gap: 8px;">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                      Featured Video / YouTube Link
+                    </span>
+                    <span style="font-size: 0.74rem; font-weight: 600; color: #7A694B; background: rgba(197, 160, 89, 0.18); padding: 2px 8px; border-radius: 999px;">Between Dear &amp; About Us</span>
+                  </label>
+                  <div style="display: flex; gap: 8px;">
+                    <input type="text" id="quote-t2-video-url" class="admin-input" placeholder="e.g. https://youtu.be/OctoMQEqK9E" value="https://youtu.be/OctoMQEqK9E" style="flex: 1;">
+                    <a href="https://youtu.be/OctoMQEqK9E" target="_blank" id="btn-open-video-link" class="admin-btn-secondary" style="display: inline-flex; align-items: center; justify-content: center; text-decoration: none; padding: 0.5rem 0.85rem; font-size: 0.85rem; white-space: nowrap; border-radius: 8px;" title="Open video in new tab">Test ▶</a>
+                  </div>
+                  <span style="font-size: 0.78rem; color: #6C5428; margin-top: 6px; display: block; line-height: 1.4;">
+                    Paste any YouTube video link (e.g. <code>https://youtu.be/OctoMQEqK9E</code>) or direct video URL. It automatically embeds right between the Greeting and About Us sections.
+                  </span>
+                </div>
+
+                <div class="admin-form-group col-full">
+                  <label class="admin-label">Hero Cover Background Artwork URL</label>
+                  <input type="text" id="quote-t2-hero-bg" class="admin-input" value="./images/template2/hero-card-bg.jpg">
                 </div>
               </div>
             </div>
 
-            <!-- 2. Events Manager Card -->
+            <!-- 2. Celebration Events Manager Card -->
             <div class="admin-card">
               <div class="admin-card-header">
                 <div>
@@ -1849,7 +2682,7 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                     2. Celebration Events Manager
                   </h3>
-                  <p class="admin-card-desc">Add/remove events and configure crew staffing breakdowns.</p>
+                  <p class="admin-card-desc">Configure events schedule, dates, locations, and crew staffing breakdown.</p>
                 </div>
                 <button type="button" class="admin-btn-add" id="btn-add-quote-event">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -1862,174 +2695,435 @@
               </div>
             </div>
 
-            <!-- 3. Services Offered Card -->
+            <!-- 3. About Us & Editorial Story Card -->
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <div>
+                  <h3 class="admin-card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    3. About Us & Editorial Story
+                  </h3>
+                  <p class="admin-card-desc">Edit studio storytelling narrative and optional media banner.</p>
+                </div>
+              </div>
+
+              <div class="admin-form-grid">
+                <div class="admin-form-group col-full">
+                  <label class="admin-label">About Us Title</label>
+                  <input type="text" id="quote-t2-about-title" class="admin-input" value="About Us">
+                </div>
+
+                <div class="admin-form-group col-full">
+                  <label class="admin-label">About Us Description Story</label>
+                  <textarea id="quote-t2-about-desc" class="admin-textarea" style="min-height: 100px;">At Timemachine & Co, we freeze fleeting moments to make your forever love story a timeless masterpiece, weaving the magic of your wedding into a tapestry of emotions, traditions, and heirlooms. Embark on your journey with us, and create a visual legacy treasured for generations to come.</textarea>
+                </div>
+
+                <div class="admin-form-group col-full">
+                  <label class="admin-label">Featured Media / Video Banner URL (Optional)</label>
+                  <input type="text" id="quote-t2-banner-url" class="admin-input" placeholder="Leave empty for soft warm card or enter video URL" value="">
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Showcase Photo Gallery (4 Photos) -->
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <div>
+                  <h3 class="admin-card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                    4. Showcase Photo Gallery (4 Photos)
+                  </h3>
+                  <p class="admin-card-desc">Curated 2-column image showcase matching the PDF editorial layout.</p>
+                </div>
+              </div>
+
+              <div class="admin-form-grid">
+                <div class="admin-form-group">
+                  <label class="admin-label">Photo 1 (Top Left)</label>
+                  <div class="admin-thumb-row">
+                    <div class="admin-media-preview-box">
+                      <img id="thumb-t2-gal-1" src="./images/template2/gallery-1.jpg" alt="Preview 1">
+                    </div>
+                    <input type="text" id="quote-t2-gallery-1" class="admin-input" value="./images/template2/gallery-1.jpg">
+                  </div>
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-label">Photo 2 (Bottom Left)</label>
+                  <div class="admin-thumb-row">
+                    <div class="admin-media-preview-box">
+                      <img id="thumb-t2-gal-2" src="./images/template2/gallery-2.jpg" alt="Preview 2">
+                    </div>
+                    <input type="text" id="quote-t2-gallery-2" class="admin-input" value="./images/template2/gallery-2.jpg">
+                  </div>
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-label">Photo 3 (Top Right)</label>
+                  <div class="admin-thumb-row">
+                    <div class="admin-media-preview-box">
+                      <img id="thumb-t2-gal-3" src="./images/template2/gallery-3.jpg" alt="Preview 3">
+                    </div>
+                    <input type="text" id="quote-t2-gallery-3" class="admin-input" value="./images/template2/gallery-3.jpg">
+                  </div>
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-label">Photo 4 (Bottom Right)</label>
+                  <div class="admin-thumb-row">
+                    <div class="admin-media-preview-box">
+                      <img id="thumb-t2-gal-4" src="./images/template2/gallery-4.jpg" alt="Preview 4">
+                    </div>
+                    <input type="text" id="quote-t2-gallery-4" class="admin-input" value="./images/template2/gallery-4.jpg">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Services Offered & Deliverables Card -->
             <div class="admin-card">
               <div class="admin-card-header">
                 <div>
                   <h3 class="admin-card-title">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                    3. Services Offered & Deliverables
+                    5. Services Offered & Deliverables
                   </h3>
-                  <p class="admin-card-desc">Toggle deliverables to include in the proposal pricing.</p>
+                  <p class="admin-card-desc">Toggle and customize deliverables titles, descriptions, and revision policies.</p>
                 </div>
               </div>
 
-              <div style="display: flex; flex-direction: column; gap: 1rem;">
-                <label style="display: flex; align-items: flex-start; gap: 0.75rem; background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1rem; border-radius: 8px; cursor: pointer;">
-                  <input type="checkbox" id="svc-pictures-check" checked style="margin-top: 0.25rem; width: 18px; height: 18px; accent-color: #C5A059;">
-                  <div>
-                    <strong style="color: var(--color-heading); font-size: 0.95rem;">Edited Pictures & Color Grading</strong>
-                    <p style="font-size: 0.82rem; color: var(--color-body-muted); margin: 0.2rem 0 0 0;">Signature color-graded high-resolution photos delivered via private online gallery.</p>
+              <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                <!-- 1. Edited Pictures -->
+                <div style="background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1.25rem; border-radius: 8px;">
+                  <label style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="svc-pictures-check" checked style="width: 18px; height: 18px; accent-color: #C5A059;">
+                    <strong style="color: var(--color-heading); font-size: 0.95rem;">Include Edited Pictures</strong>
+                  </label>
+                  <div class="admin-form-group" style="margin-bottom: 0.5rem;">
+                    <label class="admin-label">Title</label>
+                    <input type="text" id="quote-svc-pictures-title" class="admin-input" value="Edited Pictures">
                   </div>
-                </label>
+                  <div class="admin-form-group">
+                    <label class="admin-label">Description</label>
+                    <textarea id="quote-svc-pictures-desc" class="admin-textarea" style="min-height: 65px;">You shall receive 1,000 fully edited images from all events, portraying your wedding story, delivered on the cloud within 60 days from payment clearance.</textarea>
+                  </div>
+                </div>
 
-                <label style="display: flex; align-items: flex-start; gap: 0.75rem; background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1rem; border-radius: 8px; cursor: pointer;">
-                  <input type="checkbox" id="svc-films-check" checked style="margin-top: 0.25rem; width: 18px; height: 18px; accent-color: #C5A059;">
-                  <div>
-                    <strong style="color: var(--color-heading); font-size: 0.95rem;">Cinematic Wedding Films & Teasers</strong>
-                    <p style="font-size: 0.82rem; color: var(--color-body-muted); margin: 0.2rem 0 0 0;">4K Cinematic Teaser + Full Feature Film with original sound design & color grade.</p>
+                <!-- 2. Cinematic Wedding Films -->
+                <div style="background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1.25rem; border-radius: 8px;">
+                  <label style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="svc-films-check" checked style="width: 18px; height: 18px; accent-color: #C5A059;">
+                    <strong style="color: var(--color-heading); font-size: 0.95rem;">Include Cinematic Wedding Films</strong>
+                  </label>
+                  <div class="admin-form-group" style="margin-bottom: 0.5rem;">
+                    <label class="admin-label">Title</label>
+                    <input type="text" id="quote-svc-films-title" class="admin-input" value="Cinematic Wedding Films">
                   </div>
-                </label>
+                  <div class="admin-form-group" style="margin-bottom: 0.5rem;">
+                    <label class="admin-label">Description</label>
+                    <textarea id="quote-svc-films-desc" class="admin-textarea" style="min-height: 75px;">1 cinematic HD film with the best footage from your events, edited according to our style, to be delivered on cloud within 60 days from payment clearance. You can suggest any number of changes but all at once and within a week of delivery.</textarea>
+                  </div>
+                  <div class="admin-form-group">
+                    <label class="admin-label">Revision Disclaimer Note</label>
+                    <input type="text" id="quote-svc-films-note" class="admin-input" value="*Changes will be accepted only once from 2nd time Rs 15,000 will be charged extra.">
+                  </div>
+                </div>
 
-                <label style="display: flex; align-items: flex-start; gap: 0.75rem; background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1rem; border-radius: 8px; cursor: pointer;">
-                  <input type="checkbox" id="svc-albums-check" checked style="margin-top: 0.25rem; width: 18px; height: 18px; accent-color: #C5A059;">
-                  <div>
-                    <strong style="color: var(--color-heading); font-size: 0.95rem;">Handcrafted Printed Wedding Albums</strong>
-                    <p style="font-size: 0.82rem; color: var(--color-body-muted); margin: 0.2rem 0 0 0;">Fine-art hardcover printed wedding albums with handcrafted velvet/leather binding.</p>
+                <!-- 3. Printed Albums -->
+                <div style="background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1.25rem; border-radius: 8px;">
+                  <label style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="svc-albums-check" checked style="width: 18px; height: 18px; accent-color: #C5A059;">
+                    <strong style="color: var(--color-heading); font-size: 0.95rem;">Include Printed Albums</strong>
+                  </label>
+                  <div class="admin-form-group" style="margin-bottom: 0.5rem;">
+                    <label class="admin-label">Title</label>
+                    <input type="text" id="quote-svc-albums-title" class="admin-input" value="Printed Albums">
                   </div>
-                </label>
+                  <div class="admin-form-group">
+                    <label class="admin-label">Description</label>
+                    <textarea id="quote-svc-albums-desc" class="admin-textarea" style="min-height: 65px;">You shall receive 3 Printed albums from the best events each album has 40 sheets. An extra sheet will incur an additional charge of ₹600 per sheet.</textarea>
+                  </div>
+                </div>
 
-                <label style="display: flex; align-items: flex-start; gap: 0.75rem; background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1rem; border-radius: 8px; cursor: pointer;">
-                  <input type="checkbox" id="svc-videos-check" checked style="margin-top: 0.25rem; width: 18px; height: 18px; accent-color: #C5A059;">
-                  <div>
-                    <strong style="color: var(--color-heading); font-size: 0.95rem;">Traditional Ceremony Video Coverage</strong>
-                    <p style="font-size: 0.82rem; color: var(--color-body-muted); margin: 0.2rem 0 0 0;">Full-length uncut coverage of traditional rituals and stage proceedings with crisp audio.</p>
+                <!-- 4. Traditional Videos -->
+                <div style="background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1.25rem; border-radius: 8px;">
+                  <label style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="svc-videos-check" checked style="width: 18px; height: 18px; accent-color: #C5A059;">
+                    <strong style="color: var(--color-heading); font-size: 0.95rem;">Include Traditional Videos</strong>
+                  </label>
+                  <div class="admin-form-group" style="margin-bottom: 0.5rem;">
+                    <label class="admin-label">Title</label>
+                    <input type="text" id="quote-svc-videos-title" class="admin-input" value="Traditional Videos">
                   </div>
-                </label>
+                  <div class="admin-form-group">
+                    <label class="admin-label">Description</label>
+                    <textarea id="quote-svc-videos-desc" class="admin-textarea" style="min-height: 65px;">You shall receive 5 long traditional video of all events in documentary style, delivered within 75 days from payment clearance.</textarea>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <!-- 4. Final Quote Pricing & Payment Card -->
+            <!-- 6. Final Quote Pricing & Payment Timeline Card -->
             <div class="admin-card">
               <div class="admin-card-header">
                 <div>
                   <h3 class="admin-card-title">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                    4. Final Quote Pricing & Terms
+                    6. Quote Price Callout & Payment Timeline
                   </h3>
-                  <p class="admin-card-desc">Set overall quotation price and payment milestone notes.</p>
+                  <p class="admin-card-desc">Configure overall quotation price, client callout wording, and milestone schedule.</p>
                 </div>
               </div>
 
               <div class="admin-form-grid">
                 <div class="admin-form-group col-full">
-                  <label class="admin-label">Final Quote Price (₹ Total INR)</label>
-                  <input type="text" id="quote-total-price" class="admin-input" placeholder="e.g. 2,50,000" value="2,50,000">
+                  <label class="admin-label">Final Quote Base Price (₹ Total)</label>
+                  <input type="text" id="quote-total-price" class="admin-input" placeholder="e.g. 1,50,000" value="">
                 </div>
 
                 <div class="admin-form-group">
-                  <label class="admin-label">Advance Payment (%)</label>
-                  <input type="text" id="quote-advance-pct" class="admin-input" value="50% Advance Upon Booking">
+                  <label class="admin-label">Price Callout Greeting</label>
+                  <input type="text" id="quote-t2-price-greeting" class="admin-input" value="Dear">
                 </div>
 
                 <div class="admin-form-group">
-                  <label class="admin-label">Final Payment (%)</label>
-                  <input type="text" id="quote-final-pct" class="admin-input" value="50% Prior to First Event">
+                  <label class="admin-label">Price Callout Subtitle</label>
+                  <input type="text" id="quote-t2-price-subtitle" class="admin-input" value="Your final quote price would be">
+                </div>
+
+                <div class="admin-form-group col-full" style="border-top: 1px solid var(--color-border-light); padding-top: 1rem;">
+                  <strong style="font-size: 0.9rem; color: var(--color-heading);">Payment Milestones & Hard Drive Policy:</strong>
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-label">Advance Payment Title</label>
+                  <input type="text" id="quote-t2-advance-title" class="admin-input" value="Advance Payment">
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-label">Advance Payment Terms</label>
+                  <input type="text" id="quote-t2-advance-text" class="admin-input" value="50% of the total billing value to be paid as an advance to block the dates.">
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-label">Final Payment Title</label>
+                  <input type="text" id="quote-t2-final-title" class="admin-input" value="Final Payment">
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-label">Final Payment Terms</label>
+                  <input type="text" id="quote-t2-final-text" class="admin-input" value="Remaining 50% payment along with Transportation charges shall be done before/after wedding before receiving Raw footage.">
                 </div>
 
                 <div class="admin-form-group col-full">
-                  <label class="admin-label">Raw Footage / Hard Drive Requirement Note</label>
-                  <input type="text" id="quote-hd-note" class="admin-input" value="Client to provide two 4TB high-speed USB-C External Hard Drives for raw footage & master video delivery.">
+                  <label class="admin-label">Hard Drive Backup Note</label>
+                  <input type="text" id="quote-hd-note" class="admin-input" value="*You're required to provide us 2 units of 4TB Hard Drives to ensure the backup and safety of your data.">
+                </div>
+
+                <div class="admin-form-group col-full">
+                  <label class="admin-label">Cancellation Policy Disclaimer Note</label>
+                  <input type="text" id="quote-t2-cancel-note" class="admin-input" value="Note : Incase of any cancellation, the advance or the payments cannot be returned.">
                 </div>
               </div>
             </div>
 
-            <!-- 5. Add-Ons & Dynamic Calculator Card -->
+            <!-- 7. Additional Services & Add-Ons Card -->
             <div class="admin-card">
               <div class="admin-card-header">
                 <div>
                   <h3 class="admin-card-title">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-                    5. Add-Ons & Real-Time Dynamic Calculator
+                    7. Additional Services & Add-Ons
                   </h3>
-                  <p class="admin-card-desc">Select optional equipment, live streaming, and heirloom album add-ons.</p>
+                  <p class="admin-card-desc">Configure optional equipment, live streaming, and drone add-ons with interactive select buttons.</p>
                 </div>
               </div>
 
-              <div style="display: flex; flex-direction: column; gap: 1rem;">
-                <label style="display: flex; align-items: flex-start; gap: 0.75rem; background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1rem; border-radius: 8px; cursor: pointer;">
-                  <input type="checkbox" id="addon-led-check" style="margin-top: 0.25rem; width: 18px; height: 18px; accent-color: #F59E0B;">
-                  <div style="flex: 1;">
-                    <strong style="color: var(--color-heading); font-size: 0.95rem;">P3 LED Wall (10x8 ft)</strong> — <span style="color: #F59E0B; font-weight: 700;">+₹25,000 / event</span>
-                    <p style="font-size: 0.82rem; color: var(--color-body-muted); margin: 0.2rem 0 0 0;">High-brightness P3 outdoor/indoor stage backdrop LED screen.</p>
-                  </div>
-                </label>
+              <div class="admin-form-grid" style="margin-bottom: 1.5rem;">
+                <div class="admin-form-group col-full">
+                  <label class="admin-label">Section Subtitle Note</label>
+                  <input type="text" id="quote-t2-addons-subtitle" class="admin-input" value="If you're interested in expanding your package, we also provide additional services that are not included in the standard package:">
+                </div>
+              </div>
 
-                <label style="display: flex; align-items: flex-start; gap: 0.75rem; background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1rem; border-radius: 8px; cursor: pointer;">
-                  <input type="checkbox" id="addon-livestream-check" style="margin-top: 0.25rem; width: 18px; height: 18px; accent-color: #F59E0B;">
-                  <div style="flex: 1;">
-                    <strong style="color: var(--color-heading); font-size: 0.95rem;">Web Live Streaming</strong> — <span style="color: #F59E0B; font-weight: 700;">+₹15,000 / event</span>
-                    <p style="font-size: 0.82rem; color: var(--color-body-muted); margin: 0.2rem 0 0 0;">Multi-camera full HD live stream to YouTube/custom private website link.</p>
+              <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                <!-- Add-On 1: LED Wall -->
+                <div style="background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1.25rem; border-radius: 8px;">
+                  <label style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="addon-led-check" style="width: 18px; height: 18px; accent-color: #C5A059;">
+                    <strong style="color: var(--color-heading); font-size: 0.95rem;">Select by Default: LED Wall (+₹25,000)</strong>
+                  </label>
+                  <div class="admin-form-grid">
+                    <div class="admin-form-group">
+                      <label class="admin-label">Title</label>
+                      <input type="text" id="quote-addon-led-title" class="admin-input" value="LED Wall">
+                    </div>
+                    <div class="admin-form-group">
+                      <label class="admin-label">Price (₹)</label>
+                      <input type="number" id="quote-addon-led-price" class="admin-input" value="25000">
+                    </div>
+                    <div class="admin-form-group col-full">
+                      <label class="admin-label">Description</label>
+                      <textarea id="quote-addon-led-desc" class="admin-textarea" style="min-height: 60px;">Digital LED Screens to showcase your Event video from multiple cameras LIVE. Equipped with a P3 display, of about 10 ft width and 8ft height.</textarea>
+                    </div>
                   </div>
-                </label>
+                </div>
 
-                <label style="display: flex; align-items: flex-start; gap: 0.75rem; background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1rem; border-radius: 8px; cursor: pointer;">
-                  <input type="checkbox" id="addon-drone-check" style="margin-top: 0.25rem; width: 18px; height: 18px; accent-color: #F59E0B;">
-                  <div style="flex: 1;">
-                    <strong style="color: var(--color-heading); font-size: 0.95rem;">Drone Aerial Coverage</strong> — <span style="color: #F59E0B; font-weight: 700;">+₹15,000 / event</span>
-                    <p style="font-size: 0.82rem; color: var(--color-body-muted); margin: 0.2rem 0 0 0;">4K Aerial cinematic drone views of venue & grand entries.</p>
+                <!-- Add-On 2: Web Live -->
+                <div style="background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1.25rem; border-radius: 8px;">
+                  <label style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="addon-weblive-check" style="width: 18px; height: 18px; accent-color: #C5A059;">
+                    <strong style="color: var(--color-heading); font-size: 0.95rem;">Select by Default: Web Live (+₹15,000)</strong>
+                  </label>
+                  <div class="admin-form-grid">
+                    <div class="admin-form-group">
+                      <label class="admin-label">Title</label>
+                      <input type="text" id="quote-addon-weblive-title" class="admin-input" value="Web Live">
+                    </div>
+                    <div class="admin-form-group">
+                      <label class="admin-label">Price (₹)</label>
+                      <input type="number" id="quote-addon-weblive-price" class="admin-input" value="15000">
+                    </div>
+                    <div class="admin-form-group col-full">
+                      <label class="admin-label">Description</label>
+                      <textarea id="quote-addon-weblive-desc" class="admin-textarea" style="min-height: 60px;">Live telecasting of your event video footage on the web. You're required to provide a name to generate a custom link that you can share with your friends and family so that they can watch the event remotely.</textarea>
+                    </div>
                   </div>
-                </label>
+                </div>
 
-                <div style="display: flex; align-items: center; justify-content: space-between; background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1rem; border-radius: 8px;">
-                  <div>
-                    <strong style="color: var(--color-heading); font-size: 0.95rem;">Extra 40-Sheet Heirloom Albums</strong>
-                    <p style="font-size: 0.82rem; color: var(--color-body-muted); margin: 0.2rem 0 0 0;">+₹25,000 per extra album (extra sheets @ ₹600/sheet)</p>
+                <!-- Add-On 3: Drone -->
+                <div style="background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1.25rem; border-radius: 8px;">
+                  <label style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="addon-drone-check" style="width: 18px; height: 18px; accent-color: #C5A059;">
+                    <strong style="color: var(--color-heading); font-size: 0.95rem;">Select by Default: Drone (+₹15,000)</strong>
+                  </label>
+                  <div class="admin-form-grid">
+                    <div class="admin-form-group">
+                      <label class="admin-label">Title</label>
+                      <input type="text" id="quote-addon-drone-title" class="admin-input" value="Drone">
+                    </div>
+                    <div class="admin-form-group">
+                      <label class="admin-label">Price (₹)</label>
+                      <input type="number" id="quote-addon-drone-price" class="admin-input" value="15000">
+                    </div>
+                    <div class="admin-form-group col-full">
+                      <label class="admin-label">Description</label>
+                      <textarea id="quote-addon-drone-desc" class="admin-textarea" style="min-height: 60px;">If you wish for a drone service for your events it would be chargeable at Rs.15,000/- per event. The drones will be used to cover decor only and are subject to government permissions.</textarea>
+                    </div>
                   </div>
-                  <div class="crew-counter-group">
-                    <button type="button" class="crew-btn" id="btn-addon-album-minus">-</button>
-                    <span id="addon-album-count" style="font-weight: 700; font-size: 0.95rem; width: 28px; text-align: center;">0</span>
-                    <button type="button" class="crew-btn" id="btn-addon-album-plus">+</button>
+                </div>
+
+                <!-- Add-On 4: Print Albums -->
+                <div style="background: #FAF8F5; border: 1px solid var(--color-border-light); padding: 1.25rem; border-radius: 8px;">
+                  <label style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.75rem; cursor: pointer;">
+                    <input type="checkbox" id="addon-albums-check" style="width: 18px; height: 18px; accent-color: #C5A059;">
+                    <strong style="color: var(--color-heading); font-size: 0.95rem;">Select by Default: Print Albums (+₹25,000)</strong>
+                  </label>
+                  <div class="admin-form-grid">
+                    <div class="admin-form-group">
+                      <label class="admin-label">Title</label>
+                      <input type="text" id="quote-addon-albums-title" class="admin-input" value="Print Albums">
+                    </div>
+                    <div class="admin-form-group">
+                      <label class="admin-label">Price (₹)</label>
+                      <input type="number" id="quote-addon-albums-price" class="admin-input" value="25000">
+                    </div>
+                    <div class="admin-form-group col-full">
+                      <label class="admin-label">Description</label>
+                      <textarea id="quote-addon-albums-desc" class="admin-textarea" style="min-height: 60px;">Premium designer album of 40 sheets portraying your wedding story and each costs</textarea>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- 6. Customize Pictures & Video Showcase Card -->
+            <!-- 8. Terms of Service Manager Card -->
             <div class="admin-card">
               <div class="admin-card-header">
                 <div>
                   <h3 class="admin-card-title">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                    6. Customize Pictures & Video Showcase
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    8. Terms of Service Manager (11 Clauses)
                   </h3>
-                  <p class="admin-card-desc">Select gallery photo theme and custom video/image URLs for the client's proposal link.</p>
+                  <p class="admin-card-desc">Edit, add, or customize terms, legal conditions, data security, and cancellation terms.</p>
+                </div>
+                <button type="button" class="admin-btn-add" id="btn-add-quote-term">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  Add Custom Term
+                </button>
+              </div>
+
+              <div class="admin-form-group col-full" style="margin-bottom: 1.25rem;">
+                <label class="admin-label">Terms Subtitle Description</label>
+                <input type="text" id="quote-t2-terms-subtitle" class="admin-input" value="Our terms of service, including cancellation policies and copyright information, are detailed below for your review.">
+              </div>
+
+              <div id="quote-terms-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                <!-- Dynamically populated terms items with Title & Description inputs -->
+              </div>
+            </div>
+
+            <!-- 9. Next Steps & Studio Contact Info Card -->
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <div>
+                  <h3 class="admin-card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    9. Next Steps & Studio Footer Links
+                  </h3>
+                  <p class="admin-card-desc">Call-to-action message, direct phone/WhatsApp buttons, and studio social handles.</p>
                 </div>
               </div>
 
               <div class="admin-form-grid">
                 <div class="admin-form-group col-full">
-                  <label class="admin-label">Photo Theme Preset</label>
-                  <select id="quote-media-theme" class="admin-input">
-                    <option value="set1" selected>Set 1: Niharika & Anish (Fine Art Warm Gold)</option>
-                    <option value="set2">Set 2: Royal Destination (Emerald Luxury)</option>
-                    <option value="set3">Set 3: Modern Minimalist (Monochrome & Warm)</option>
-                  </select>
+                  <label class="admin-label">Next Steps Section Title</label>
+                  <input type="text" id="quote-t2-nextsteps-title" class="admin-input" value="Next Steps">
                 </div>
 
                 <div class="admin-form-group col-full">
-                  <label class="admin-label">Featured 4K Teaser Video URL</label>
-                  <input type="text" id="quote-video-url" class="admin-input" placeholder="./videos/hero-wedding.mp4 or https://..." value="./videos/hero-wedding.mp4">
+                  <label class="admin-label">Paragraph 1</label>
+                  <textarea id="quote-t2-nextsteps-p1" class="admin-textarea" style="min-height: 60px;">Please take a moment to review the proposal and attached terms of service. If you have any questions or would like to discuss specific details, feel free to reach out</textarea>
+                </div>
+
+                <div class="admin-form-group col-full">
+                  <label class="admin-label">Paragraph 2</label>
+                  <textarea id="quote-t2-nextsteps-p2" class="admin-textarea" style="min-height: 60px;">We eagerly anticipate the opportunity to contribute to your special day and create a visual story that will be cherished for a lifetime.</textarea>
+                </div>
+
+                <div class="admin-form-group col-full">
+                  <label class="admin-label">Sign-off / Signature</label>
+                  <input type="text" id="quote-t2-nextsteps-signoff" class="admin-input" value="Best regards, Timemachine & Co.">
                 </div>
 
                 <div class="admin-form-group">
-                  <label class="admin-label">About Us Photo 1 (Top)</label>
-                  <input type="text" id="quote-about1-url" class="admin-input" placeholder="./images/about-top.jpg">
+                  <label class="admin-label">Studio Direct Phone</label>
+                  <input type="text" id="quote-t2-phone" class="admin-input" value="+919705632982">
                 </div>
 
                 <div class="admin-form-group">
-                  <label class="admin-label">About Us Photo 2 (Bottom)</label>
-                  <input type="text" id="quote-about2-url" class="admin-input" placeholder="./images/about-bottom.jpg">
+                  <label class="admin-label">Studio WhatsApp Number</label>
+                  <input type="text" id="quote-t2-whatsapp" class="admin-input" value="+919705632982">
+                </div>
+
+                <div class="admin-form-group col-full">
+                  <label class="admin-label">Studio Official Website Link</label>
+                  <input type="text" id="quote-t2-website" class="admin-input" value="https://www.timemachineworks.com">
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-label">Instagram Link</label>
+                  <input type="text" id="quote-t2-instagram" class="admin-input" value="https://instagram.com/TimemachineandCo">
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-label">Facebook Link</label>
+                  <input type="text" id="quote-t2-facebook" class="admin-input" value="https://facebook.com">
+                </div>
+
+                <div class="admin-form-group">
+                  <label class="admin-label">Pinterest Link</label>
+                  <input type="text" id="quote-t2-pinterest" class="admin-input" value="https://pinterest.com">
                 </div>
               </div>
             </div>
